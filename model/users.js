@@ -1,6 +1,6 @@
 const { Schema, model } = require('../config/mongo')
 const isEmail = require('validator/lib/isEmail')
-
+const isMobilePhone = require('validator/lib/isMobilePhone')
 
 const UserSchema = new Schema({
   email: {
@@ -19,7 +19,8 @@ const UserSchema = new Schema({
   },
   phone: {
     type: String,
-    required: true
+    required: true,
+    validator: [isMobilePhone, 'Phone number is not valid']
   },
   role: {
     type: String,
