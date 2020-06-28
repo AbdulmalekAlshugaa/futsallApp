@@ -1,7 +1,9 @@
-import React, { memo, useState } from 'react'
+import React, { memo, useState, useContext } from 'react'
 import Link from 'next/link'
+import globalContext from './context'
 
 const Main = memo(() => {
+  const { user } = useContext(globalContext)
   const [showMenu, setShowMenu] = useState(false)
   return (
     <div>
@@ -62,7 +64,7 @@ const Main = memo(() => {
                       </Link>
                     </div>
                     <div>
-                      <Link href='/login'>
+                      <Link href={user ? '/dashboard' : '/login'}>
                         <a className='block w-full px-5 py-3 text-center font-medium text-indigo-600 bg-gray-50 hover:bg-gray-100 hover:text-indigo-700 focus:outline-none focus:bg-gray-100 focus:text-indigo-700 transition duration-150 ease-in-out' role='menuitem'>
               Log in
                         </a>
@@ -90,7 +92,7 @@ const Main = memo(() => {
                 </p>
                 <div className='mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start'>
                   <div className='rounded-md shadow'>
-                    <Link href='/login'>
+                    <Link href={user ? '/dashboard' : '/login'}>
                       <a href='#' className='w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10'>
                 Get started
                       </a>

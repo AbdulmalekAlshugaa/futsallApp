@@ -12,12 +12,24 @@ const App = memo(({ Component, pageProps }) => {
     (async () => {
       if (!user) {
         // send axios request
-        if (router.route !== '/login' || router.router !== '/register' || router.router !== '/feature' || router.router !== '/') {
-          router.push('/')
+        try {
+          const res = await axios.get('/api/user/CurrentUser')
+          console.log('res', res)
+          if (res.data.user) {
+            console.log('hi')
+            setUser(res.data.user)
+          } else {
+            if (router.route !== '/login' || router.router !== '/register' || router.router !== '/feature' || router.router !== '/') {
+              router.push('/')
+            }
+          }
+        } catch (error) {
+          if (router.route !== '/login' || router.router !== '/register' || router.router !== '/feature' || router.router !== '/') {
+            router.push('/')
+          }
         }
-        const res = await axios.get('/api/user/current_user', { withCredentials: true })
-        console.log('res', res)
       } else {
+        console.log('redirect')
         if (router.route === '/login' || router.router === '/register') {
           router.push('/dashboard')
         }

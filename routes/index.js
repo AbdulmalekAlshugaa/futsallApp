@@ -48,7 +48,7 @@ routs.post('/login', async (req, res) => {
       throw new Error('Passowrd is wrong')
     }
 
-    res.cookie('user_id', user.id, {
+    res.cookie('email', user.email, {
       httpOnly: true,
       secure: false,
       expires: new Date(Date.now() + 8640000000)
@@ -75,7 +75,7 @@ routs.get('/CurrentUser', async (req, res) => {
 
     if (!curUser){
       console.log("something wrong")
-      res.status(401).end
+      res.status(401).end()
 
     }else{
       res.json({
