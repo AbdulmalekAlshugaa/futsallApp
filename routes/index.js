@@ -108,9 +108,9 @@ routs.get('/logout', async (req, res) => {
 
   try{
     // clear the email address  and responds with message 
-    res.clearCookie("email", cookie).json({
-      message:"user has logout successfully "
-    })
+    res.clearCookie("email", cookie)
+
+    res.redirect('/')
   
     
  
