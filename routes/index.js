@@ -98,6 +98,39 @@ routs.get('/CurrentUser', async (req, res) => {
 
 })
 
+// logout
+routs.get('/logout', async (req, res) => { 
+  console.log('hi from logout function')
+
+   // get cookies 
+ const  cookie = req.cookies
+  console.log("cookies", cookie)
+
+  try{
+    // clear 
+    res.clearCookie("email", cookie).json({
+      message:"user has logout successfully "
+    })
+  
+    
+ 
+
+
+    // get the currentUser from the cookies 
+
+  }catch(e){
+    json.status(500).json({
+      error:e.message
+    })
+    console.log(e)
+  }
+
+
+
+})
+// logout 
+
+
 
 
 
