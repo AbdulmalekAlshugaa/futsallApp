@@ -2,19 +2,26 @@ const routs = require('express').Router()
 const crypto = require('crypto')
 const createUser = require('../functions/createUser')
 const findUserByEmail = require('../functions/findUser')
+const createTeam = require('../functions/createTeam')
+const getUsers = require('../functions/getUsers')
+const mongdb = require('../config/mongo')
+const { assert } = require('console')
+const { json } = require('body-parser')
+const url = "http://localhost:3000/api/"
+
 
 routs.post('/createUser', async (req, res) => {
 // send json
   try {
     const { name, email, password, phone, role } = req.body
 
-    const ePassword = crypto.createHmac('sha256', process.env.hashingSecret) // encrypt password
+    const ePassword = crypto.createHmac('sha256', process.env.hashingSecret) // encrypted password
       .update(password).digest('hex') // passing the password
 
     await createUser({ name, password: ePassword, email, phone, role })
 
     res.json({
-      message: 'SUCCESS'
+      message: 'SUCCESS User Has Created Successfully'
     })
     //
   } catch (error) {
@@ -27,7 +34,7 @@ routs.post('/createUser', async (req, res) => {
 
 routs.post('/login', async (req, res) => {
   try {
-    console.log('hi')
+    console.log('hi before sending request')
     const { email, password } = req.body
 
     const ePassword = crypto.createHmac('sha256', process.env.hashingSecret) // encrypt password
@@ -53,5 +60,114 @@ routs.post('/login', async (req, res) => {
     console.log(error)
   }
 })
+
+// get CurrentUsers 
+
+routs.get('/CurrentUser', async (req, res) => { 
+  console.log('hi from CurrentUser function')
+
+  console.log('req.cookies', req.cookie)
+  const  {email} = req.cookies
+  
+
+  try{
+  
+
+    const curUser = findUserByEmail(email)
+
+    if (!curUser){
+      console.log("something wrong")
+      res.status(401).end
+
+    }else{
+      res.json({
+        user: curUser
+
+      })
+    }
+
+
+    // get the currentUser from the cookies 
+
+  }catch(e){
+    json.status(500).json({
+      error:e.message
+    })
+    console.log(e)
+  }
+
+
+
+})
+
+
+
+
+// get Players 
+routs.get('/players', async(req, res) => {
+
+  try{
+   const {role} = req.query
+   console.log('role', role)
+  const name = await getUsers(role)
+
+
+  if (!name){
+    console.log("Something went wrong ")
+    res.status(500).end
+  }else{
+      // if user role is there get the last of the user name 
+    console.log("Success"+name)
+    res.json({
+  
+      name:name
+    })
+  }
+
+
+  }catch(error){
+  
+    console.log("Error")
+    console.log(error)
+    json.status(500).json({
+      error:error.message
+    })
+  }
+  
+
+
+
+
+})
+// send team request 
+routs.post('/createTeam', async (req, res )=>{
+
+  try{
+
+    const {orgnizerId, start, end, listOfPlayer} = req.body
+
+    await createTeam ({orgnizerId, start, end, listOfPlayer})
+  
+    res.json({
+      message: 'SUCCESS Team Has Created Successfully'
+  
+    })
+  
+
+  }catch(error){
+    res.status(500).json({
+      error:error.message
+    })
+    console.log(error)
+    throw error
+  }
+
+ 
+
+})
+
+// get userName from userCoolcation 
+
+
 
 module.exports = routs

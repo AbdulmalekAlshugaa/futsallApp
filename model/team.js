@@ -1,4 +1,4 @@
-const { Schema,models } = require('../config/mongo')
+const { Schema,model } = require('../config/mongo')
 
 
 const teamScame = new Schema({
@@ -21,6 +21,6 @@ const teamScame = new Schema({
 
 })
 
-const team = models ('team', teamScame)
+const team = model ('team', teamScame)
 
 module.exports = team
