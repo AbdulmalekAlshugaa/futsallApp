@@ -4,8 +4,7 @@ const next = require('next')
 const userRoute = require('./routes/index')
 const bodyParser = require('body-parser')
 const compression = require('compression')
-
-
+const cookieParser = require('cookie-parser')
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
@@ -17,8 +16,8 @@ app.prepare().then(() => {
 
   server.use(bodyParser.json())
   server.use(compression())
-
-  server.use("/api/user", userRoute)
+  server.use(cookieParser())
+  server.use(newFunction(), userRoute)
 
 
 
@@ -32,4 +31,8 @@ app.prepare().then(() => {
   })
 })
 
+
+function newFunction() {
+  return "/api/user"
+}
 

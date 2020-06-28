@@ -15,6 +15,8 @@ const App = memo(({ Component, pageProps }) => {
         if (router.route !== '/login' || router.router !== '/register' || router.router !== '/feature' || router.router !== '/') {
           router.push('/')
         }
+        const res = await axios.get('/api/user/current_user', { withCredentials: true })
+        console.log('res', res)
       } else {
         if (router.route === '/login' || router.router === '/register') {
           router.push('/dashboard')

@@ -27,6 +27,7 @@ routs.post('/createUser', async (req, res) => {
 
 routs.post('/login', async (req, res) => {
   try {
+    console.log('hi')
     const { email, password } = req.body
 
     const ePassword = crypto.createHmac('sha256', process.env.hashingSecret) // encrypt password
@@ -40,7 +41,7 @@ routs.post('/login', async (req, res) => {
       throw new Error('Passowrd is wrong')
     }
 
-    res.cookie('email', user.email, {
+    res.cookie('user_id', user.id, {
       httpOnly: true,
       secure: false,
       expires: new Date(Date.now() + 8640000000)
