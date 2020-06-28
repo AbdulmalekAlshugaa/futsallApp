@@ -120,7 +120,7 @@ routs.get('/players', async(req, res) => {
     console.log("Success"+name)
     res.json({
   
-      name:name
+      Users:name
     })
   }
 
