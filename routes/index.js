@@ -66,14 +66,12 @@ routs.post('/login', async (req, res) => {
 routs.get('/CurrentUser', async (req, res) => { 
   console.log('hi from CurrentUser function')
 
-  console.log('req.cookies', req.cookie)
+  console.log('req.cookies', req.cookies)
   const  {email} = req.cookies
   
-
   try{
   
-
-    const curUser = findUserByEmail(email)
+    const curUser =  await findUserByEmail(email)
 
     if (!curUser){
       console.log("something wrong")

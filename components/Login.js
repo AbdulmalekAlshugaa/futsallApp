@@ -1,12 +1,16 @@
-import React, { memo, useState } from 'react'
+import React, { memo, useState, useContext } from 'react'
+import globalContext from './context'
 import Link from 'next/link'
 import axios from 'axios'
 
 const Login = memo(() => {
+  const { user, setUser } = useContext(globalContext)
   const [form, setForm] = useState({
     email: '',
     password: ''
   })
+
+  console.log('user, setUser ', user, setUser )
   const login = async (e) => {
     e.preventDefault()
     try {
@@ -15,7 +19,7 @@ const Login = memo(() => {
         password: form.password
       })
 
-      console.log('res', res)
+      setUser(res.data.user)
     } catch (error) {
       console.log(error)
     }
