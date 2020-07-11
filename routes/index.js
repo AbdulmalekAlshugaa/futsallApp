@@ -247,6 +247,7 @@ routs.post('/centerPhtos', filemiddelware.single('file'), async (req, res)=>{
   
           
         })
+        
       }
     } catch (error) {
       console.log('Error')
