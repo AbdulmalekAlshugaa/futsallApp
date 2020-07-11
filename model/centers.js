@@ -30,7 +30,15 @@ const centerSchema = new mongoose.Schema({
   },
   address: {
     type: String
+  },
+  photos:{
+    type: [String] 
+  },
+  workingHours:{
+    from:String,
+    to:String
   }
+
 
 })
 
