@@ -40,7 +40,7 @@ const App = memo(({ Component, pageProps }) => {
   return (
     <>
       <Head>
-        <link rel='stylesheet' href='./style.css' />
+        <link rel='stylesheet' href='/style.css' />
       </Head>
       <GlobalContext.Provider value={{ setUser, user }}>
         <Component {...pageProps} />
