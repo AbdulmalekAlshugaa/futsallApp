@@ -1,15 +1,13 @@
-const center = require('../model/centers')
+const Center = require('../model/centers')
 
-try{
-    const getCenterByID = async (id) =>{
-     
-        const getCenter = await center.findOne({id})
-        
-        return getCenter
-        
-         }
+const findcenterbyID = async (id) => {
+  try {
+    const center = await Center.findOne({ id })
 
-}catch(err){
-    console.log(err)
-    
+    return center
+  } catch (error) {
+    console.log(error)
+  }
 }
+
+module.exports = findcenterbyID
