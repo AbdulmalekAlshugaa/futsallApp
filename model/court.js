@@ -2,19 +2,21 @@ const { Schema, model } = require('../config/mongo')
 
 
 const courtModel = new Schema({
-  statrt:{
-    required:true,
-    type:Date
+  centerId:{
+    type:String,
+    required:true
   },
-  end:{
-    required:true,
-    type:Date
+  capcity:{
+    type:Number,
+    required:true
   },
-  bokkedBy:{
-    required:require,
-    type:true
+  price:{
+    type:Number,
+    required:true
 
   }
+ 
+
 
 
 
