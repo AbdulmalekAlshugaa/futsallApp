@@ -230,45 +230,35 @@ routs.post('/centerPhtos', filemiddelware.single('file'), async (req, res)=>{
 
 
   // get center
-  routs.get('/getCenter', async (req, res) => {
-    try {
-      const { id } = req.query
-      console.log('role', id)
-      const centerID = await getCenter(id)
   
-      if (!centerID) {
-        console.log('Something went wrong ')
-        res.status(500).end()
-      } else {
-        // if user role is there get the last of the user name
-        console.log('Success' + centerID)
-        res.json({
-          center:centerID
-  
-          
-        })
+})
+
+routs.get('/getCenter', async (req, res) => {
+  try {
+    const { id } = req.query
+    console.log('role', id)
+    const centerID = await getCenter(id)
+
+    if (!centerID) {
+      console.log('Something went wrong ')
+      res.status(500).end()
+    } else {
+      // if user role is there get the last of the user name
+      console.log('Success' + centerID)
+      res.json({
+        center:centerID
+
         
-      }
-    } catch (error) {
-      console.log('Error')
-      console.log(error)
-      res.status(500).json({
-        error: error.message
       })
+      
     }
-  })
-
-
-
-
-
-
-
-
-
-
-
-
+  } catch (error) {
+    console.log('Error')
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
 })
 
 module.exports = routs
