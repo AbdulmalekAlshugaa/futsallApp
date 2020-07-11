@@ -1,15 +1,24 @@
-import React, { memo, useState, useEffect } from 'react'
+import React, { memo, useState, useEffect, useContext } from 'react'
+import globalState from '../context'
 import OwnerLayout from '../layout/Owner'
 import axios from 'axios'
 import cogoToast from 'cogo-toast'
 import { useRouter } from 'next/router'
 
 const CenterDetails = memo(() => {
+  const { query } = useContext(globalState)
+  const router = useRouter()
   useEffect(() => {
-    (async => {
-
+    (async () => {
+      console.log('query ___', query)
+      if (query && query.id) {
+      const res = await axios.get(`/api/user/getCenter?id=${query.id}`)
+      console.log('res', res)
+      }
+    
     })()
-  }, [])
+  }, [query])
+ 
   return (
     <div>
       <OwnerLayout />

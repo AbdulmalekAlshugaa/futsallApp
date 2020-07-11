@@ -7,7 +7,13 @@ import { useRouter } from 'next/router'
 const App = memo(({ Component, pageProps }) => {
   const router = useRouter()
   const [user, setUser] = useState(null)
+  const [query, setQuery] = useState(null)
 
+  useEffect(() => {
+    (async () => {
+      setQuery(router.query)
+    })()
+  }, [router.query])
   useEffect(() => {
     (async () => {
       console.log('hello world')
@@ -37,12 +43,14 @@ const App = memo(({ Component, pageProps }) => {
       }
     })()
   }, [user])
+
+  console.log('router _app', router)
   return (
     <>
       <Head>
         <link rel='stylesheet' href='/style.css' />
       </Head>
-      <GlobalContext.Provider value={{ setUser, user }}>
+      <GlobalContext.Provider value={{ setUser, user, query }}>
         <Component {...pageProps} />
       </GlobalContext.Provider>
     </>
