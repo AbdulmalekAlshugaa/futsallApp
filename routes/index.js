@@ -5,8 +5,11 @@ const findUserByEmail = require('../functions/findUser')
 const createTeam = require('../functions/createTeam')
 const getUsers = require('../functions/getUsers')
 const mongdb = require('../config/mongo')
+const possport = require('passport')
+const jwt = require('jsonwebtoken')
 const { assert } = require('console')
 const { json } = require('body-parser')
+
 const url = "http://localhost:3000/api/"
 
 
@@ -197,7 +200,51 @@ routs.post('/createTeam', async (req, res )=>{
 
 })
 
-// get userName from userCoolcation 
+// forget password 
+routs.post('/forget', async (req, res) => {
+  console.log("Hi from forget password route ")
+  try {
+
+    const { email } = req.body
+    console.log('hi with email address', email)
+  // passing the password
+  
+    const user = await findUserByEmail(email)
+
+    if (!user) {
+      res.status(500).json({
+        error:"email not found"
+      })
+      throw new Error('email not found')
+      
+    } else  {
+      // email is found {Send email rest link}
+      res.json({
+        user,
+        email
+
+      })
+      // try{
+      //   jwt.sign({email}, process.env.RestPassword, {expiresIn: '25m'});
+      //   const  data = {
+      //     from:'noReply@futsall.com', 
+      //     to:email,
+      //     subject:'Accouunt Rest password',
+      //     html:'please click into the link '
+      //   }
+      //   return data
+        
+      // }catch(e){
+
+      // }
+  
+   
+    }
+
+  } catch (error) {
+    console.log(error)
+  }
+})
 
 
 
