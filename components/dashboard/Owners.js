@@ -1,9 +1,13 @@
 import React from 'react'
+import OwnerLayout from '../layout/Owner'
 
 const Dashboard = React.memo(() => {
   return (
     <div>
-      Dashboard Owner
+      <OwnerLayout />
+      <div>
+        Dashboard owner
+      </div>
     </div>
   )
 })

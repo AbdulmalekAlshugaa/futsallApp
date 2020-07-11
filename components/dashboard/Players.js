@@ -1,9 +1,13 @@
 import React from 'react'
+import PlayerLayout from '../layout/Players'
 
 const Dashboard = React.memo(() => {
   return (
     <div>
-      Dashboard Player
+      <PlayerLayout />
+      <div>
+        Dashboard player
+      </div>
     </div>
   )
 })

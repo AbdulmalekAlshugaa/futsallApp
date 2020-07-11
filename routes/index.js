@@ -4,10 +4,9 @@ const createUser = require('../functions/createUser')
 const findUserByEmail = require('../functions/findUser')
 const createTeam = require('../functions/createTeam')
 const getUsers = require('../functions/getUsers')
-const mongdb = require('../config/mongo')
-const { assert } = require('console')
-const { json } = require('body-parser')
-const url = "http://localhost:3000/api/"
+const getLocation = require('../functions/getLocation')
+const createCenter = require('../functions/createCenter')
+const getMyCenters = require('../functions/getMyCenters')
 
 
 routs.post('/createUser', async (req, res) => {
@@ -20,6 +19,11 @@ routs.post('/createUser', async (req, res) => {
 
     await createUser({ name, password: ePassword, email, phone, role })
 
+    res.cookie('email', email, {
+      httpOnly: true,
+      secure: false,
+      expires: new Date(Date.now() + 8640000000)
+    })
     res.json({
       message: 'SUCCESS User Has Created Successfully'
     })
@@ -58,147 +62,145 @@ routs.post('/login', async (req, res) => {
     })
   } catch (error) {
     console.log(error)
+    res.status(500).json({ message: error.message })
   }
 })
 
-// get CurrentUsers 
+// get CurrentUsers
 
-routs.get('/CurrentUser', async (req, res) => { 
-  console.log('hi from CurrentUser function')
+routs.get('/CurrentUser', async (req, res) => {
+  const { email } = req.cookies
 
-  console.log('req.cookies', req.cookies)
-  const  {email} = req.cookies
-  
-  try{
-  
-    const curUser =  await findUserByEmail(email)
+  try {
+    const curUser = await findUserByEmail(email)
 
-    if (!curUser){
-      console.log("something wrong")
+    if (!curUser) {
+      console.log('something wrong')
       res.status(401).end()
-
-    }else{
+    } else {
       res.json({
         user: curUser
 
       })
     }
 
-
-    // get the currentUser from the cookies 
-
-  }catch(e){
-    json.status(500).json({
-      error:e.message
+    // get the currentUser from the cookies
+  } catch (e) {
+    res.status(500).json({
+      error: e.message
     })
     console.log(e)
   }
-
-
-
 })
 
 // logout
-routs.get('/logout', async (req, res) => { 
+routs.get('/logout', async (req, res) => {
   console.log('hi from logout function')
 
-   // get cookies 
- const  cookie = req.cookies
-  console.log("cookies", cookie)
+  // get cookies
+  const cookie = req.cookies
+  console.log('cookies', cookie)
 
-  try{
-    // clear the email address  and responds with message 
-    res.clearCookie("email", cookie)
+  try {
+    // clear the email address  and responds with message
+    res.clearCookie('email', cookie)
 
     res.redirect('/')
-  
-    
- 
 
-
-    // get the currentUser from the cookies 
-
-  }catch(e){
-    json.status(500).json({
-      error:e.message
+    // get the currentUser from the cookies
+  } catch (e) {
+    res.status(500).json({
+      error: e.message
     })
     console.log(e)
   }
-
-
-
 })
-// logout 
+// logout
 
+// get Players
+routs.get('/players', async (req, res) => {
+  try {
+    const { role } = req.query
+    console.log('role', role)
+    const name = await getUsers(role)
 
+    if (!name) {
+      console.log('Something went wrong ')
+      res.status(500).end()
+    } else {
+      // if user role is there get the last of the user name
+      console.log('Success' + name)
+      res.json({
 
-
-
-// get Players 
-routs.get('/players', async(req, res) => {
-
-  try{
-   const {role} = req.query
-   console.log('role', role)
-  const name = await getUsers(role)
-
-
-  if (!name){
-    console.log("Something went wrong ")
-    res.status(500).end
-  }else{
-      // if user role is there get the last of the user name 
-    console.log("Success"+name)
-    res.json({
-  
-      Users:name
-    })
-  }
-
-
-  }catch(error){
-  
-    console.log("Error")
+        Users: name
+      })
+    }
+  } catch (error) {
+    console.log('Error')
     console.log(error)
-    json.status(500).json({
-      error:error.message
+    res.status(500).json({
+      error: error.message
     })
   }
-  
-
-
-
-
 })
-// send team request 
-routs.post('/createTeam', async (req, res )=>{
+// send team request
+routs.post('/createTeam', async (req, res) => {
+  try {
+    const { orgnizerId, start, end, listOfPlayer } = req.body
 
-  try{
+    await createTeam({ orgnizerId, start, end, listOfPlayer })
 
-    const {orgnizerId, start, end, listOfPlayer} = req.body
-
-    await createTeam ({orgnizerId, start, end, listOfPlayer})
-  
     res.json({
       message: 'SUCCESS Team Has Created Successfully'
-  
-    })
-  
 
-  }catch(error){
-    res.status(500).json({
-      error:error.message
     })
+  } catch (error) {
     console.log(error)
-    throw error
+    res.status(500).json({
+      error: error.message
+    })
   }
-
- 
-
 })
 
-// get userName from userCoolcation 
+routs.get('/getMyCenters', async (req, res) => {
+  try {
+    const centers = await getMyCenters(req.cookies.email)
+    res.json({ centers })
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+routs.post('/createCenter', async (req, res) => {
+  try {
+    const { name, address, phone } = req.body
 
+    // get the location
+    const locations = await getLocation(address)
+    console.log(locations)
+    if (locations.length === 0) {
+      throw new Error('No location found')
+    }
 
+    await createCenter({
+      name,
+      address,
+      phoneNumber: phone,
+      ownerEmail: req.cookies.email,
+      location: {
+        type: 'Point',
+        coordinates: [locations[0].longitude, locations[0].latitude]
+      }
+    })
+    res.json({ message: 'SUCCESS' })
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+// get userName from userCoolcation
 
 module.exports = routs

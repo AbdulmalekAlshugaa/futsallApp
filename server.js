@@ -17,9 +17,7 @@ app.prepare().then(() => {
   server.use(bodyParser.json())
   server.use(compression())
   server.use(cookieParser())
-  server.use(newFunction(), userRoute)
-
-
+  server.use('/api/user', userRoute)
 
   server.all('*', (req, res) => {
     return handle(req, res)
@@ -30,9 +28,3 @@ app.prepare().then(() => {
     console.log(`> Ready on http://localhost:${port}`)
   })
 })
-
-
-function newFunction() {
-  return "/api/user"
-}
-
