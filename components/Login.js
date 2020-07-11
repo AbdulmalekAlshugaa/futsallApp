@@ -1,7 +1,8 @@
-import React, { memo, useState, useContext } from 'react'
+import React, { memo, useState, useContext, useEffect } from 'react'
 import globalContext from './context'
 import Link from 'next/link'
 import axios from 'axios'
+import cogoToast from 'cogo-toast'
 
 const Login = memo(() => {
   const { user, setUser } = useContext(globalContext)
@@ -10,18 +11,21 @@ const Login = memo(() => {
     password: ''
   })
 
-  console.log('user, setUser ', user, setUser )
   const login = async (e) => {
     e.preventDefault()
+    const loader = cogoToast.loading('Login...', { hideAfter: 0 })
     try {
       const res = await axios.post('/api/user/login', {
         email: form.email,
         password: form.password
       })
-
+      loader.hide()
       setUser(res.data.user)
     } catch (error) {
-      console.log(error)
+      loader.hide()
+      if (error.response) {
+        cogoToast.error(error.response.data.message)
+      }
     }
   }
   return (
@@ -38,7 +42,7 @@ const Login = memo(() => {
               <a className='font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150'>
           Create an account
               </a>
-           </Link>
+            </Link>
           </p>
         </div>
         <form className='mt-8' action='#' method='POST'>

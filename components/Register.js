@@ -1,9 +1,13 @@
-import React, { memo, useState } from 'react'
+import React, { memo, useState, useContext } from 'react'
+import GlobalState from './context'
 import axios from 'axios'
 import Link from 'next/link'
 import cogoToast from 'cogo-toast'
+import { useRouter } from 'next/router'
 
 const Register = memo(() => {
+  const route = useRouter()
+  const { setUser } = useContext(GlobalState)
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -13,20 +17,22 @@ const Register = memo(() => {
     role: 'PLAYER'
   })
 
-  console.log('form', form)
   const register = async (e) => {
     e.preventDefault()
+    let loader
     try {
       if (form.password !== form.confirmPassword) {
         cogoToast.error('Password does not match')
         return
       }
-      const res = await axios.post('/api/user/createUser', {
+      loader = cogoToast.loading('Creating an account', { hideAfter: 0 })
+      await axios.post('/api/user/createUser', {
         name: form.name, email: form.email, password: form.password, phone: form.phone, role: form.role
       })
-      console.log('res', res)
+      route.reload()
     } catch (error) {
-      console.log(error)
+      loader.hide()
+      cogoToast.error('Error')
     }
   }
   return (
@@ -65,7 +71,7 @@ const Register = memo(() => {
               </div>
             </div>
             <div className='-mt-px'>
-              <select onClick={(e) => setForm({ ...form, role: e.target.value })} className='appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5'>
+              <select onChange={(e) => setForm({ ...form, role: e.target.value })} className='appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5'>
                 <option value='PLAYER'>PLAYER</option>
                 <option value='OWNER'>OWNER</option>
               </select>

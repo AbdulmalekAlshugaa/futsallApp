@@ -1,12 +1,15 @@
 const mongoose = require('../config/mongo')
 
 const centerSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true
+  },
   name: { // name of the ceneter
     type: String,
     required: true
-
   },
-  ownerID: {
+  ownerEmail: {
     type: String,
     required: true
   },
@@ -25,9 +28,8 @@ const centerSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  rating: {
-    type: Number,
-    required: true
+  address: {
+    type: String
   }
 
 })
