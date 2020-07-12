@@ -30,7 +30,7 @@ const CreateCourt = memo(({ close, centerId }) => {
         capacity: parseFloat(court.capacity)
       })
       console.log('res', res)
-      // router.reload()
+      router.reload()
     } catch (error) {
       setIsAddingCenter(false)
       loader.hide()

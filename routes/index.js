@@ -11,6 +11,7 @@ const filemiddelware = require('../middleware/files')
 const uploadFile = require('../functions/uploadFirebase')
 const getCenterbyid = require('../functions/getCenter')
 const createCourt = require('../functions/createCourt')
+const getCourtCenter = require('../functions/getCourtCenter')
 //const updatePhoto = require('')
 
 
@@ -271,7 +272,9 @@ routs.get('/getCenter', async (req, res) => {
     const {id} = req.query
     console.log('id is',id)
     const centers = await getCenterbyid(id)
-    res.json({ centers })
+    const courts = await getCourtCenter(id)
+    console.log('courts', courts)
+    res.json({ centers, courts })
   } catch (error) {
     res.status(500).json({
       error: error.message

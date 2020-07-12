@@ -14,7 +14,8 @@ const CenterDetails = memo(() => {
     (async () => {
       if (query && query.id) {
         const res = await axios.get(`/api/user/getCenter?id=${query.id}`)
-        setCenter(res.data.centers)
+        console.log('res', res)
+        setCenter({ ...res.data.centers, courts: res.data.courts })
         setIsLoading(false)
       }
     })()
@@ -44,7 +45,7 @@ const CenterDetails = memo(() => {
                 <div>
                   <div className='bg-white rounded-md shadow'>
                     <div className='p-6 flex justify-between border-b border-gray-200'>
-                      <div className='font-bold text-lg'>{center ? 0 : 0} Centers found</div>
+                      <div className='font-bold text-lg'>{center ? center.courts.length : 0} Courts found</div>
                       <div>
                         <button className='rounded bg-indigo-600 text-white px-4 py-2' onClick={() => setOpenCreateModal(true)}>
                       Add new court
