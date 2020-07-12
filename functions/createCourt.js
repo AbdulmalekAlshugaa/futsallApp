@@ -8,7 +8,7 @@ const Court = require('../model/court')
 const CreateCourt = async (courtobj)=>{
     try {
         courtobj.id = uuidv4()
-        const addCourt = Court(courtobj)
+        const addCourt = new Court(courtobj)
 
         await addCourt.save()
         return addCourt
