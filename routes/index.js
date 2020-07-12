@@ -213,9 +213,9 @@ routs.post('/createCourt', async (req, res)=>{
   console.log("test")
   try {
 
-    const  {name,  centerId, capcity, price } = req.body
+    const  {name,  centerId, capacity, price } = req.body
 
-    await createCourt ({name, centerId, capcity, price})
+    await createCourt ({name, centerId, capacity, price})
 
     res.json({
 
