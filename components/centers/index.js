@@ -2,6 +2,7 @@ import React, { memo, useEffect, useState } from 'react'
 import OwnerLayout from '../layout/Owner'
 import CreateCenter from './CreateCenter'
 import axios from 'axios'
+import Link from 'next/link'
 import { MdKeyboardArrowRight } from 'react-icons/md'
 
 const Centers = memo(() => {
@@ -18,6 +19,13 @@ const Centers = memo(() => {
   return (
     <div>
       <OwnerLayout />
+      <header className='bg-white shadow'>
+        <div className='max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8'>
+          <h1 className='text-3xl font-bold leading-tight text-gray-900'>
+             Centers
+          </h1>
+        </div>
+      </header>
       <div className='bg-gray-200 max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 h-screen'>
         <div className='px-4 py-6 sm:px-0'>
           {isLoading ? (
@@ -47,9 +55,11 @@ const Centers = memo(() => {
                         </span>
                       </div>
                       <div className='self-center'>
-                        <a href='#'>
-                          <MdKeyboardArrowRight />
-                        </a>
+                        <Link href={`/centers/${center.id}`}>
+                          <a>
+                            <MdKeyboardArrowRight />
+                          </a>
+                        </Link>
                       </div>
                     </div>
                   </div>

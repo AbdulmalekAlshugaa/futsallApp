@@ -5,7 +5,7 @@ const multer = Multer({
   storage: Multer.memoryStorage(),
   fileFilter: (req, file, callback) => {
     const mimetype = file.mimetype
-    
+
     // const ext = path.extname(file.originalname);
     // if(ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
     //     return callback(new Error('Only images are allowed'))

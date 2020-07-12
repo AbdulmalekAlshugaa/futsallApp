@@ -1,4 +1,4 @@
-import Centers from '../components/centers'
+import Centers from '../../components/centers'
 
 const CentersPage = () => <Centers />
 

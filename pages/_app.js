@@ -7,15 +7,19 @@ import { useRouter } from 'next/router'
 const App = memo(({ Component, pageProps }) => {
   const router = useRouter()
   const [user, setUser] = useState(null)
+  const [query, setQuery] = useState(null)
 
   useEffect(() => {
     (async () => {
-      console.log('hello world')
+      setQuery(router.query)
+    })()
+  }, [router.query])
+  useEffect(() => {
+    (async () => {
       if (!user) {
         // send axios request
         try {
           const res = await axios.get('/api/user/CurrentUser')
-          console.log('res', res)
           if (res.data.user) {
             setUser(res.data.user)
           } else {
@@ -29,20 +33,20 @@ const App = memo(({ Component, pageProps }) => {
           }
         }
       } else {
-        console.log('redirect', router.route)
         if (router.route === '/login' || router.route === '/register') {
-          console.log('WTF')
           router.push('/dashboard')
         }
       }
     })()
   }, [user])
+
+  console.log('router _app', router)
   return (
     <>
       <Head>
-        <link rel='stylesheet' href='./style.css' />
+        <link rel='stylesheet' href='/style.css' />
       </Head>
-      <GlobalContext.Provider value={{ setUser, user }}>
+      <GlobalContext.Provider value={{ setUser, user, query }}>
         <Component {...pageProps} />
       </GlobalContext.Provider>
     </>
