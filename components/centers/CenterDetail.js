@@ -71,7 +71,7 @@ const CenterDetails = memo(() => {
             </div>
           </div>
           {openCreateModal && (
-            <CreateCourt close={setOpenCreateModal} />
+            <CreateCourt close={setOpenCreateModal} centerId={query.id} />
           )}
         </>
       )}

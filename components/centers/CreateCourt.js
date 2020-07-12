@@ -3,7 +3,7 @@ import axios from 'axios'
 import cogoToast from 'cogo-toast'
 import { useRouter } from 'next/router'
 
-const CreateCourt = memo(({ close }) => {
+const CreateCourt = memo(({ close, centerId }) => {
   const router = useRouter()
   const [court, setCourt] = useState({ name: '', price: '', capacity: '' })
   const [isAddingCenter, setIsAddingCenter] = useState(false)
@@ -23,10 +23,14 @@ const CreateCourt = memo(({ close }) => {
     }
     const loader = cogoToast.loading('Adding court', { hideAfter: 0 })
     try {
-      await axios.post('/api/user/createCourt', {
-        ...court
+      const res = await axios.post('/api/user/createCourt', {
+        centerId: centerId,
+        name: court.name,
+        price: parseFloat(court.price),
+        capacity: parseFloat(court.capacity)
       })
-      router.reload()
+      console.log('res', res)
+      // router.reload()
     } catch (error) {
       setIsAddingCenter(false)
       loader.hide()
