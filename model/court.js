@@ -14,7 +14,7 @@ const courtModel = new Schema({
     type:String,
     required:true
   },
-  capcity:{
+  capacity:{
     type:Number,
     required:true
   },
