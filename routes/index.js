@@ -209,11 +209,13 @@ routs.post('/createCenter', async (req, res) => {
 
 routs.post('/centerPhtos', filemiddelware.single('file'), async (req, res)=>{
 
+  console.log("Test")
   try{
     const file = req.file
 // save file to upload file function 
 
  const uri = await uploadFile(file)
+ console.log(uri)
  if (!uri){
    res.status(5000)
  }
