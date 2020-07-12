@@ -1,13 +1,19 @@
-const court = require('../model/court')
-const court = require('../model/court')
-const { find } = require('../model/court')
-// sned cenrired id 
+const Center = require('../model/court')
 
-try{
-    const findCourtWithinTheCenter = await find(centerId)
-}catch(err){
-    console.log(err)
-    throw err
+const findCourts = async (centiredID) => {
+  try {
+    const Courtscenter = await Center.find({centiredID })
+
+    return Courtscenter
+  } catch (error) {
+    console.log(error)
+  }
 }
+
+module.exports = findCourts
+
+
+
+
 
 
