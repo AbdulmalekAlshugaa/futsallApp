@@ -10,6 +10,7 @@ const getMyCenters = require('../functions/getMyCenters')
 const filemiddelware = require('../middleware/files')
 const uploadFile = require('../functions/uploadFirebase')
 const getCenterbyid = require('../functions/getCenter')
+const createCourt = require('../functions/createCourt')
 //const updatePhoto = require('')
 
 
@@ -205,9 +206,38 @@ routs.post('/createCenter', async (req, res) => {
     })
   }
 })
-// get userName from userCoolcation
 
-routs.post('/centerPhtos', filemiddelware.single('file'), async (req, res)=>{
+
+// create court 
+routs.post('/createCourt', async (req, res)=>{
+  console.log("test")
+  try {
+
+    const  {name, id,  centerId, capcity, price } = req.body
+
+    await createCourt ({name, id, centerId, capcity, price})
+
+    res.json({
+
+      message: 'SUCCESS court Has Created Successfully',
+      
+
+
+    })
+
+
+
+  
+
+
+  }catch(err){
+      res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+routs.post('/centerPhotoes', filemiddelware.single('file'), async (req, res)=>{
 
   console.log("Test")
   try{
@@ -215,6 +245,7 @@ routs.post('/centerPhtos', filemiddelware.single('file'), async (req, res)=>{
 // save file to upload file function 
 
  const uri = await uploadFile(file)
+ console.log('Url is ', uri)
  console.log(uri)
  if (!uri){
    res.status(5000)
