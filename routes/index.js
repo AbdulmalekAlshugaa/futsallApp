@@ -9,7 +9,7 @@ const createCenter = require('../functions/createCenter')
 const getMyCenters = require('../functions/getMyCenters')
 const filemiddelware = require('../middleware/files')
 const uploadFile = require('../functions/uploadFirebase')
-const getCenter = require('../functions/getCenter')
+const getCenterbyid = require('../functions/getCenter')
 //const updatePhoto = require('')
 
 
@@ -205,16 +205,17 @@ routs.post('/createCenter', async (req, res) => {
     })
   }
 })
-
 // get userName from userCoolcation
 
 routs.post('/centerPhtos', filemiddelware.single('file'), async (req, res)=>{
 
+  console.log("Test")
   try{
     const file = req.file
 // save file to upload file function 
 
  const uri = await uploadFile(file)
+ console.log(uri)
  if (!uri){
    res.status(5000)
  }
@@ -233,32 +234,20 @@ routs.post('/centerPhtos', filemiddelware.single('file'), async (req, res)=>{
   
 })
 
+// get center by id 
 routs.get('/getCenter', async (req, res) => {
   try {
-    const { id } = req.query
-    console.log('role', id)
-    const centerID = await getCenter(id)
-
-    if (!centerID) {
-      console.log('Something went wrong ')
-      res.status(500).end()
-    } else {
-      // if user role is there get the last of the user name
-      console.log('Success' + centerID)
-      res.json({
-        center:centerID
-
-        
-      })
-      
-    }
+    const {id} = req.query
+    console.log('id is',id)
+    const centers = await getCenterbyid(id)
+    res.json({ centers })
   } catch (error) {
-    console.log('Error')
-    console.log(error)
     res.status(500).json({
       error: error.message
     })
   }
 })
+
+
 
 module.exports = routs

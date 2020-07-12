@@ -16,12 +16,10 @@ const App = memo(({ Component, pageProps }) => {
   }, [router.query])
   useEffect(() => {
     (async () => {
-      console.log('hello world')
       if (!user) {
         // send axios request
         try {
           const res = await axios.get('/api/user/CurrentUser')
-          console.log('res', res)
           if (res.data.user) {
             setUser(res.data.user)
           } else {
@@ -35,9 +33,7 @@ const App = memo(({ Component, pageProps }) => {
           }
         }
       } else {
-        console.log('redirect', router.route)
         if (router.route === '/login' || router.route === '/register') {
-          console.log('WTF')
           router.push('/dashboard')
         }
       }
