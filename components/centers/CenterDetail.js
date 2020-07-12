@@ -13,7 +13,7 @@ const CenterDetails = memo(() => {
       console.log('query ___', query)
       if (query && query.id) {
       const res = await axios.get(`/api/user/getCenter?id=${query.id}`)
-      console.log('res', res)
+      console.log('resss', res)
       }
     
     })()
