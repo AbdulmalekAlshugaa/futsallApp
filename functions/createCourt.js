@@ -14,7 +14,7 @@ const CreateCourt = async (courtobj)=>{
         return addCourt
 
     }catch(err){
-        console.log(er)
+        console.log(err)
     }
 } 
 
