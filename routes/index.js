@@ -11,6 +11,7 @@ const filemiddelware = require('../middleware/files')
 const uploadFile = require('../functions/uploadFirebase')
 const getCenterbyid = require('../functions/getCenter')
 const createCourt = require('../functions/createCourt')
+const getCourts = require('../functions/getCourts')
 //const updatePhoto = require('')
 
 
@@ -172,6 +173,7 @@ routs.get('/getMyCenters', async (req, res) => {
   try {
     const centers = await getMyCenters(req.cookies.email)
     res.json({ centers })
+    
   } catch (error) {
     res.status(500).json({
       error: error.message
@@ -279,6 +281,23 @@ routs.get('/getCenter', async (req, res) => {
   }
 })
 
+routs.get('/getCourts', async (req, res) =>{
+  // pass the centired id 
+  console.log("Test counter")
+  try {
+    const {centerId} = req.query
+    console.log(centerId)
+   
+    const coutrs = await getCourts(centerId)
+    res.json({coutrs})   
+  }catch(err){
+    console.log(err)
+    throw err
+  }
+ 
+  
+
+})
 
 
 module.exports = routs
