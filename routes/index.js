@@ -13,6 +13,8 @@ const getCenterbyid = require('../functions/getCenter')
 const createCourt = require('../functions/createCourt')
 const getCourtCenter = require('../functions/getCourtCenter')
 const updateCenter = require('../functions/updateCenter')
+const findNearCenter = require('../functions/findNearCenter')
+const distance = require('../functions/calculateDistance')
 // const updatePhoto = require('')
 
 routs.post('/createUser', async (req, res) => {
@@ -230,6 +232,30 @@ routs.post('/createCourt', async (req, res) => {
   }
 })
 
+routs.post('/nearCenters', async (req, res) => {
+  try {
+    const address = req.body.address
+    const max = req.body.max
+    const locations = await getLocation(address)
+    if (locations.length === 0) {
+      throw new Error('No location found')
+    }
+
+    const centers = await findNearCenter({ longitude: locations[0].longitude, latitude: locations[0].latitude, max })
+    const centerWithdis = centers.map(c => {
+      const distanceKM = distance(c.location.coordinates[1], c.location.coordinates[0], locations[0].latitude, locations[0].longitude)
+      return { ...c, distanceKM }
+    })
+    res.json({
+      centerWithdis
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
 routs.post('/centerPhotoes', filemiddelware.single('file'), async (req, res) => {
   console.log('Test')
   try {
