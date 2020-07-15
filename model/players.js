@@ -10,7 +10,7 @@ const playersSchame = new mongoose.Schema({
 
   postion:{
     type:String,
-    required:true
+    required:false
   
   },
   description:{

@@ -26,7 +26,13 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     enum: ['OWNER', 'ADMIN', 'PLAYER']
+  }, 
+  position:{
+    type:String,
+    required:false,
+    enum:['Goalkeeper', 'Full-backs', 'Sweeper', 'Central Midfield','Striker']
   }
+
 })
 
 const users = model('Users', UserSchema)
