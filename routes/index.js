@@ -12,10 +12,17 @@ const uploadFile = require('../functions/uploadFirebase')
 const getCenterbyid = require('../functions/getCenter')
 const createCourt = require('../functions/createCourt')
 const getCourtCenter = require('../functions/getCourtCenter')
+<<<<<<< HEAD
 const getPlayersPostion = require('../functions/findAllPlayers')
 //const updatePhoto = require('')
 
 
+=======
+const updateCenter = require('../functions/updateCenter')
+const findNearCenter = require('../functions/findNearCenter')
+const distance = require('../functions/calculateDistance')
+// const updatePhoto = require('')
+>>>>>>> a9d3239af3996dbbe41c2ef9869892096dbff267
 
 routs.post('/createUser', async (req, res) => {
 // send json
@@ -236,69 +243,118 @@ routs.post('/createCenter', async (req, res) => {
   }
 })
 
-
-// create court 
-routs.post('/createCourt', async (req, res)=>{
-  console.log("test")
+// create court
+routs.post('/createCourt', async (req, res) => {
+  console.log('test')
   try {
+    const { name, centerId, capacity, price } = req.body
 
-    const  {name,  centerId, capacity, price } = req.body
-
-    await createCourt ({name, centerId, capacity, price})
+    await createCourt({ name, centerId, capacity, price })
 
     res.json({
 
-      message: 'SUCCESS court Has Created Successfully',
-      
+      message: 'SUCCESS court Has Created Successfully'
+
 
 
     })
-
-
-
-  
-
-
-  }catch(error){
-      res.status(500).json({
+  }catch (error) {
+    res.status(500).json({
       error: error.message
     })
   }
 })
 
-routs.post('/centerPhotoes', filemiddelware.single('file'), async (req, res)=>{
+routs.post('/nearCenters', async (req, res) => {
+  try {
+    const address = req.body.address
+    const max = req.body.max
+    const locations = await getLocation(address)
+    if (locations.length === 0) {
+      throw new Error('No location found')
+    }
 
-  console.log("Test")
-  try{
+    const centers = await findNearCenter({ longitude: locations[0].longitude, latitude: locations[0].latitude, max })
+    const centerWithdis = centers.map(c => {
+      const distanceKM = distance(c.location.coordinates[1], c.location.coordinates[0], locations[0].latitude, locations[0].longitude)
+      return { ...c, distanceKM }
+    })
+    res.json({
+      centerWithdis
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+routs.post('/centerPhotoes', filemiddelware.single('file'), async (req, res) => {
+  console.log('Test')
+  try {
     const file = req.file
-// save file to upload file function 
+    // save file to upload file function
 
- const uri = await uploadFile(file)
- console.log('Url is ', uri)
- console.log(uri)
- if (!uri){
-   res.status(5000)
- }
- res.json({uri:uri})
+    const uri = await uploadFile(file)
+    console.log('Url is ', uri)
+    console.log(uri)
+    if (!uri) {
+      res.status(5000)
+    }
+    res.json({ uri: uri })
 
- // 
-
-    
-  }catch(error){
-
+    //
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
   }
 
-
-
   // get center
-  
 })
 
-// get center by id 
+routs.post('/editCenter', async (req, res) => {
+  try {
+    const { id, address, start, end } = req.body
+    const center = await getCenterbyid(id)
+    let location
+    if (center.address !== address) {
+      const locations = await getLocation(address)
+      if (locations.length === 0) {
+        throw new Error('No location found')
+      }
+      location = {
+        type: 'Point',
+        coordinates: [locations[0].longitude, locations[0].latitude]
+      }
+    } else {
+      location = center.location
+    }
+
+    await updateCenter(id, {
+      location,
+      address,
+      workingHours: {
+        from: start,
+        to: end
+      }
+    })
+
+    res.json({ message: 'Success' })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+// get center by id
 routs.get('/getCenter', async (req, res) => {
   try {
-    const {id} = req.query
-    console.log('id is',id)
+    const { id } = req.query
+    console.log('id is', id)
     const centers = await getCenterbyid(id)
     const courts = await getCourtCenter(id)
     console.log('courts', courts)
