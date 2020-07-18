@@ -15,6 +15,8 @@ const getCourtCenter = require('../functions/getCourtCenter')
 const updateCenter = require('../functions/updateCenter')
 const findNearCenter = require('../functions/findNearCenter')
 const distance = require('../functions/calculateDistance')
+const bookingCourt = require('../functions/bookACour')
+const moment = require('moment')
 // const updatePhoto = require('')
 
 routs.post('/createUser', async (req, res) => {
@@ -219,11 +221,7 @@ routs.post('/createCourt', async (req, res) => {
     await createCourt({ name, centerId, capacity, price })
 
     res.json({
-
       message: 'SUCCESS court Has Created Successfully'
-
-
-
     })
   }catch (error) {
     res.status(500).json({
@@ -317,6 +315,45 @@ routs.post('/editCenter', async (req, res) => {
   }
 })
 
+routs.get('/bookCourt', async (req, res) => {
+  try {
+    const { centerId, courtId, from, to, date } = req.body
+
+    const bookingFrom = parseInt(from)
+    const bookingTo = parseInt(to)
+    // check within the working hours
+    const center = await getCenterbyid(centerId)
+    if (!center.workingHours.from && !center.workingHours.to) {
+      if (center.workingHours.from !== '0' && center.workingHours.to !== '0') {
+        const fromInt = parseInt(center.workingHours.from)
+        const toInt = parseInt(center.workingHours.to)
+
+        if (bookingFrom > bookingTo) {
+          throw new Error('The times are wrong')
+        } else if (bookingFrom < fromInt) {
+          throw new Error('Please check operation hour')
+        } else if (toInt < bookingTo) {
+          throw new Error('Please check operation hour')
+        }
+      }
+    }
+
+    await bookingCourt({
+      from,
+      to,
+      date: moment(date, 'YYYY-MM-DD').toISOString(),
+      userId: req.cookies.email,
+      centerId,
+      courtId
+    })
+    res.json({ message: 'SUCCESS' })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
 // get center by id
 routs.get('/getCenter', async (req, res) => {
   try {
