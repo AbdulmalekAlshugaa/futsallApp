@@ -12,22 +12,29 @@ const uploadFile = require('../functions/uploadFirebase')
 const getCenterbyid = require('../functions/getCenter')
 const createCourt = require('../functions/createCourt')
 const getCourtCenter = require('../functions/getCourtCenter')
+<<<<<<< HEAD
+const getPlayersPostion = require('../functions/findAllPlayers')
+//const updatePhoto = require('')
+
+
+=======
 const updateCenter = require('../functions/updateCenter')
 const findNearCenter = require('../functions/findNearCenter')
 const distance = require('../functions/calculateDistance')
 const bookingCourt = require('../functions/bookACour')
 const moment = require('moment')
 // const updatePhoto = require('')
+>>>>>>> a9d3239af3996dbbe41c2ef9869892096dbff267
 
 routs.post('/createUser', async (req, res) => {
 // send json
   try {
-    const { name, email, password, phone, role } = req.body
+    const { name, email, password, phone, role,postion } = req.body
 
     const ePassword = crypto.createHmac('sha256', process.env.hashingSecret) // encrypted password
       .update(password).digest('hex') // passing the password
 
-    await createUser({ name, password: ePassword, email, phone, role })
+    await createUser({ name, password: ePassword, email, phone, role,postion })
 
     res.cookie('email', email, {
       httpOnly: true,
@@ -39,6 +46,32 @@ routs.post('/createUser', async (req, res) => {
     })
     //
   } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+routs.get('/Playerpostion', async (req, res) => {
+  try {
+    const { position } = req.query
+    console.log('postion', position)
+    const players = await getPlayersPostion(position)
+
+    if (!players) {
+      console.log('Something went wrong ')
+      res.status(500).end()
+    } else {
+      // if user role is there get the last of the user name
+      console.log('Success' + players)
+      res.json({
+
+        players: players
+      })
+    }
+  } catch (error) {
+    console.log('Error')
     console.log(error)
     res.status(500).json({
       error: error.message
@@ -126,7 +159,7 @@ routs.get('/logout', async (req, res) => {
   }
 })
 // logout
-
+// get playrs based on the postion 
 // get Players
 routs.get('/players', async (req, res) => {
   try {

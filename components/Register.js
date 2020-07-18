@@ -14,7 +14,8 @@ const Register = memo(() => {
     confirmPassword: '',
     name: '',
     phone: '',
-    role: 'PLAYER'
+    role: 'PLAYER',
+    postion:'Goalkeeper'
   })
 
   const register = async (e) => {
@@ -27,7 +28,7 @@ const Register = memo(() => {
       }
       loader = cogoToast.loading('Creating an account', { hideAfter: 0 })
       await axios.post('/api/user/createUser', {
-        name: form.name, email: form.email, password: form.password, phone: form.phone, role: form.role
+        name: form.name, email: form.email, password: form.password, phone: form.phone, role: form.role ,postion: form.postion
       })
       route.reload()
     } catch (error) {
@@ -74,6 +75,15 @@ const Register = memo(() => {
               <select onChange={(e) => setForm({ ...form, role: e.target.value })} className='appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5'>
                 <option value='PLAYER'>PLAYER</option>
                 <option value='OWNER'>OWNER</option>
+              </select>
+            </div>
+            <div className='-mt-px'>
+              <select onChange={(e) => setForm({ ...form, postion: e.target.value })} className='appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5'>
+                <option value='PLAYER'>Goalkeeper</option>
+                <option value='OWNER'>Full-backs</option>
+                <option value='OWNER'>Sweeper</option>
+                <option value='OWNER'>Central Midfield</option>
+                <option value='OWNER'>Striker</option>
               </select>
             </div>
           </div>
