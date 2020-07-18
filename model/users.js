@@ -30,7 +30,7 @@ const UserSchema = new Schema({
   position:{
     type:String,
     required:false,
-    enum:['Goalkeeper', 'Full-backs', 'Sweeper', 'Central Midfield','Striker']
+    enum:['Goalkeeper', 'Full-backs', , 'Midfield','Attacker']
   }
 
 })

@@ -8,7 +8,7 @@ const createUser = async (team) => { // name and ...
         // get all the username
         const newTeam = new CreateTem(team)
 
-         await newTeam.get()
+         await newTeam.save()
 
         return true;
 

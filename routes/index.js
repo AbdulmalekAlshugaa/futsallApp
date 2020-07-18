@@ -12,17 +12,12 @@ const uploadFile = require('../functions/uploadFirebase')
 const getCenterbyid = require('../functions/getCenter')
 const createCourt = require('../functions/createCourt')
 const getCourtCenter = require('../functions/getCourtCenter')
-<<<<<<< HEAD
 const getPlayersPostion = require('../functions/findAllPlayers')
+const getMyTeam = require('../functions/getMyTeam')
+
 //const updatePhoto = require('')
 
 
-=======
-const updateCenter = require('../functions/updateCenter')
-const findNearCenter = require('../functions/findNearCenter')
-const distance = require('../functions/calculateDistance')
-// const updatePhoto = require('')
->>>>>>> a9d3239af3996dbbe41c2ef9869892096dbff267
 
 routs.post('/createUser', async (req, res) => {
 // send json
@@ -106,6 +101,28 @@ routs.post('/login', async (req, res) => {
     res.status(500).json({ message: error.message })
   }
 })
+// create team 
+routs.post('/createTeam', async (req, res) => {
+  console.log("Working")
+  try {
+    const email = req.cookies.email
+    console.log(email)
+    
+    const {id, captainEmail, from, to, date,status,listOfPlayers} = req.body
+
+    await createTeam({ id, captainEmail:email, from, to, date, status,listOfPlayers })
+
+    res.json({
+      message: 'SUCCESS Team Has Created Successfully'
+
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
 
 // get CurrentUsers
 
@@ -185,23 +202,7 @@ routs.get('/players', async (req, res) => {
   }
 })
 // send team request
-routs.post('/createTeam', async (req, res) => {
-  try {
-    const { orgnizerId, start, end, listOfPlayer } = req.body
 
-    await createTeam({ orgnizerId, start, end, listOfPlayer })
-
-    res.json({
-      message: 'SUCCESS Team Has Created Successfully'
-
-    })
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({
-      error: error.message
-    })
-  }
-})
 
 routs.get('/getMyCenters', async (req, res) => {
   try {
@@ -214,6 +215,36 @@ routs.get('/getMyCenters', async (req, res) => {
     })
   }
 })
+
+
+routs.get('/getMyTeam', async (req, res) => {
+  const { captainEmail } = req.cookies
+  const {Email} = req.query
+  console.log("Email is ",Email)
+
+  try {
+    const team = await getMyTeam(captainEmail, Email)
+
+    if (!team) {
+      console.log('something wrong')
+      res.status(401).end()
+    } else {
+      res.json({
+        team: team
+
+      })
+    }
+
+    // get the currentUser from the cookies
+  } catch (e) {
+    res.status(500).json({
+      error: e.message
+    })
+    console.log(e)
+  }
+})
+
+
 routs.post('/createCenter', async (req, res) => {
   try {
     const { name, address, phone } = req.body
