@@ -30,7 +30,8 @@ const CenterDetails = memo(() => {
   const editCenter = async () => {
     try {
       const res = await axios.post('/api/user/editCenter', {
-        id: query.id,
+        id: 
+        query.id,
         address,
         start,
         end

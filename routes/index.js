@@ -14,6 +14,9 @@ const createCourt = require('../functions/createCourt')
 const getCourtCenter = require('../functions/getCourtCenter')
 const getPlayersPostion = require('../functions/findAllPlayers')
 const getMyTeam = require('../functions/getMyTeam')
+const createCompetition = require('../functions/createCompe')
+const updateCenter = require('../functions/updateCenter')
+const subscripToComp = require('../functions/subscripToCompetition')
 
 //const updatePhoto = require('')
 
@@ -123,9 +126,7 @@ routs.post('/createTeam', async (req, res) => {
     })
   }
 })
-
 // get CurrentUsers
-
 routs.get('/CurrentUser', async (req, res) => {
   const { email } = req.cookies
 
@@ -150,7 +151,6 @@ routs.get('/CurrentUser', async (req, res) => {
     console.log(e)
   }
 })
-
 // logout
 routs.get('/logout', async (req, res) => {
   console.log('hi from logout function')
@@ -173,8 +173,6 @@ routs.get('/logout', async (req, res) => {
     console.log(e)
   }
 })
-// logout
-// get playrs based on the postion 
 // get Players
 routs.get('/players', async (req, res) => {
   try {
@@ -202,8 +200,6 @@ routs.get('/players', async (req, res) => {
   }
 })
 // send team request
-
-
 routs.get('/getMyCenters', async (req, res) => {
   try {
     const centers = await getMyCenters(req.cookies.email)
@@ -215,7 +211,6 @@ routs.get('/getMyCenters', async (req, res) => {
     })
   }
 })
-
 
 routs.get('/getMyTeam', async (req, res) => {
   const { captainEmail } = req.cookies
@@ -243,8 +238,6 @@ routs.get('/getMyTeam', async (req, res) => {
     console.log(e)
   }
 })
-
-
 routs.post('/createCenter', async (req, res) => {
   try {
     const { name, address, phone } = req.body
@@ -273,7 +266,6 @@ routs.post('/createCenter', async (req, res) => {
     })
   }
 })
-
 // create court
 routs.post('/createCourt', async (req, res) => {
   console.log('test')
@@ -295,7 +287,6 @@ routs.post('/createCourt', async (req, res) => {
     })
   }
 })
-
 routs.post('/nearCenters', async (req, res) => {
   try {
     const address = req.body.address
@@ -344,7 +335,6 @@ routs.post('/centerPhotoes', filemiddelware.single('file'), async (req, res) => 
 
   // get center
 })
-
 routs.post('/editCenter', async (req, res) => {
   try {
     const { id, address, start, end } = req.body
@@ -380,7 +370,6 @@ routs.post('/editCenter', async (req, res) => {
     })
   }
 })
-
 // get center by id
 routs.get('/getCenter', async (req, res) => {
   try {
@@ -414,6 +403,47 @@ routs.get('/getCourts', async (req, res) =>{
   
 
 })
+
+routs.post('/createCompetition', async (req, res)=>{
+
+  try{
+    // get centired id 
+    const {centerId,name,from, to, time, decription,prize} = req.body
+
+    await createCompetition({ centerId,name,from,to,time,decription,prize})
+
+    res.json({
+      createCompetition:"Created Successfully"
+    })
+    
+  }catch(error){
+    res.status(500).json({
+      error: error.message
+    })
+  }
+ 
+
+
+})
+routs.post('/subscripToComp', async (req, res) =>{
+  try{
+    const email = req.cookies.email
+    const {captainEmail,name,listofmyPlayers,decription} = req.body
+
+    await subscripToComp({ captainEmail:email,name,listofmyPlayers,decription})
+
+    res.json({
+      subscrip:"Team has added to the list"
+    })
+  }catch(error){
+    res.status(500).json({
+      error: error.message
+    })
+  }
+
+} )
+
+
 
 
 module.exports = routs
