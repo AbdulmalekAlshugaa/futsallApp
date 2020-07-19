@@ -545,9 +545,9 @@ routs.post('/createCompetition', async (req, res)=>{
 routs.post('/subscripToComp', async (req, res) =>{
   try{
     const email = req.cookies.email
-    const {captainEmail,name,listofmyPlayers,decription} = req.body
+    const {id, competitionId, captainEmail,name,listofmyPlayers,decription} = req.body
 
-    await subscripToComp({ captainEmail:email,name,listofmyPlayers,decription})
+    await subscripToComp({ id,competitionId, captainEmail:email,name,listofmyPlayers,decription})
 
     res.json({
       subscrip:"Team has added to the list"

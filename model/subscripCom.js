@@ -2,7 +2,10 @@
 const {Schema, model} = require('../config/mongo')
 
 const createSubscripe = new Schema({
- 
+    id:{
+        required:true,
+        type:String
+    },
     competitionId:{
         required:true,
         type:String
