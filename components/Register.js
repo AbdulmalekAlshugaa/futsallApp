@@ -15,7 +15,7 @@ const Register = memo(() => {
     name: '',
     phone: '',
     role: 'PLAYER',
-    postion:'Goalkeeper'
+    postion: 'GK'
   })
 
   const register = async (e) => {
@@ -28,7 +28,7 @@ const Register = memo(() => {
       }
       loader = cogoToast.loading('Creating an account', { hideAfter: 0 })
       await axios.post('/api/user/createUser', {
-        name: form.name, email: form.email, password: form.password, phone: form.phone, role: form.role ,postion: form.postion
+        name: form.name, email: form.email, password: form.password, phone: form.phone, role: form.role, postion: form.postion
       })
       route.reload()
     } catch (error) {
@@ -50,7 +50,7 @@ const Register = memo(() => {
               <a className='font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150'>
           Login
               </a>
-        </Link>
+            </Link>
           </p>
         </div>
         <form className='mt-8' action='#' method='POST'>
@@ -77,15 +77,16 @@ const Register = memo(() => {
                 <option value='OWNER'>OWNER</option>
               </select>
             </div>
-            <div className='-mt-px'>
-              <select onChange={(e) => setForm({ ...form, postion: e.target.value })} className='appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5'>
-                <option value='PLAYER'>Goalkeeper</option>
-                <option value='OWNER'>Full-backs</option>
-                <option value='OWNER'>Sweeper</option>
-                <option value='OWNER'>Central Midfield</option>
-                <option value='OWNER'>Striker</option>
-              </select>
-            </div>
+            {form.role === 'PLAYER' && (
+              <div className='-mt-px'>
+                <select onChange={(e) => setForm({ ...form, postion: e.target.value })} className='appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5'>
+                  <option value='GK'>Goalkeeper</option>
+                  <option value='FB'>Full-backs</option>
+                  <option value='MD'>Midfield</option>
+                  <option value='AT'>Attacker</option>
+                </select>
+              </div>
+            )}
           </div>
           <div className='mt-6'>
             <button type='submit' className='group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out' onClick={register}>

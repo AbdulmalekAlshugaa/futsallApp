@@ -17,7 +17,7 @@ const playersSchame = new mongoose.Schema({
     type:String,
     required:true
   }
-})
+}, { timestamps: true })
 
 const players = mongoose.model('players', playersSchame)
 

@@ -13,21 +13,33 @@ const getCenterbyid = require('../functions/getCenter')
 const createCourt = require('../functions/createCourt')
 const getCourtCenter = require('../functions/getCourtCenter')
 const getPlayersPostion = require('../functions/findAllPlayers')
+const getMyCourtBooking = require('../functions/getMyCourtBooking')
+const getBookingByCenterId = require('../functions/getBookingByCenterId')
+const getBookingByCourtId = require('../functions/getBookingByCourtId')
+const removeBookingById = require('../functions/removeBookingById')
+const handleCenter = require('../functions/handleCenter')
+// const updatePhoto = require('')
+
+const updateCenter = require('../functions/updateCenter')
+const findNearCenter = require('../functions/findNearCenter')
+const distance = require('../functions/calculateDistance')
+const bookingCourt = require('../functions/bookACour')
+const moment = require('moment')
+// const updatePhoto = require('')
 const getMyTeam = require('../functions/getMyTeam')
 const createCompetition = require('../functions/createCompe')
-const updateCenter = require('../functions/updateCenter')
 const subscripToComp = require('../functions/subscripToCompetition')
 
 //const updatePhoto = require('')
 routs.post('/createUser', async (req, res) => {
 // send json
   try {
-    const { name, email, password, phone, role,postion } = req.body
+    const { name, email, password, phone, role, postion } = req.body
 
     const ePassword = crypto.createHmac('sha256', process.env.hashingSecret) // encrypted password
       .update(password).digest('hex') // passing the password
 
-    await createUser({ name, password: ePassword, email, phone, role,postion })
+    await createUser({ name, password: ePassword, email, phone, role, postion })
 
     res.cookie('email', email, {
       httpOnly: true,
@@ -170,6 +182,8 @@ routs.get('/logout', async (req, res) => {
     console.log(e)
   }
 })
+// logout
+// get playrs based on the postion
 // get Players
 routs.get('/players', async (req, res) => {
   try {
@@ -263,6 +277,32 @@ routs.post('/createCenter', async (req, res) => {
     })
   }
 })
+
+routs.post('/cancelBooking', async (req, res) => {
+  try {
+    await removeBookingById(req.body.bookingId)
+    res.json({ message: 'SUCCESS' })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+
+routs.post('/handleCenter', async (req, res) => {
+  try {
+    await handleCenter(req.body.centerId, req.body.type)
+    res.json({ message: 'SUCCESS' })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
 // create court
 routs.post('/createCourt', async (req, res) => {
   console.log('test')
@@ -272,13 +312,9 @@ routs.post('/createCourt', async (req, res) => {
     await createCourt({ name, centerId, capacity, price })
 
     res.json({
-
       message: 'SUCCESS court Has Created Successfully'
-
-
-
     })
-  }catch (error) {
+  } catch (error) {
     res.status(500).json({
       error: error.message
     })
@@ -367,6 +403,89 @@ routs.post('/editCenter', async (req, res) => {
     })
   }
 })
+
+routs.post('/bookCourt', async (req, res) => {
+  try {
+    const { centerId, courtId, from, to, date } = req.body
+
+    const bookingFrom = parseInt(from)
+    const bookingTo = parseInt(to)
+    // check within the working hours
+    const center = await getCenterbyid(centerId)
+    if (!center) {
+      return res.status(404).json({ message: 'Center not found' })
+    }
+    if (!center.workingHours.from && !center.workingHours.to) {
+      if (center.workingHours.from !== '0' && center.workingHours.to !== '0') {
+        const fromInt = parseInt(center.workingHours.from)
+        const toInt = parseInt(center.workingHours.to)
+
+        if (bookingFrom > bookingTo) {
+          throw new Error('The times are wrong')
+        } else if (bookingFrom < fromInt) {
+          throw new Error('Please check operation hour')
+        } else if (toInt < bookingTo) {
+          throw new Error('Please check operation hour')
+        }
+      }
+    }
+
+    // validate
+    const booking = await getBookingByCourtId(courtId)
+    booking.map(b => {
+      if (moment(b.date).isSame(moment(date, 'YYYY-MM-DD'), 'day')) {
+        if (from === b.from || to === b.to || (Number(from) > Number(b.from) && Number(from) < Number(b.to)) || (Number(to) > Number(b.from) && Number(to) < Number(b.to))) {
+          throw new Error('Court is reserved')
+        }
+      }
+    })
+    await bookingCourt({
+      from,
+      to,
+      date: moment(date, 'YYYY-MM-DD').toISOString(),
+      userId: req.cookies.email,
+      centerId,
+      courtId
+    })
+    res.json({ message: 'SUCCESS' })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+routs.get('/getMyBook', async (req, res) => {
+  try {
+    const booking = await getMyCourtBooking(req.cookies.email)
+    res.json({
+      booking
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+routs.get('/getMyCenterBooking', async (req, res) => {
+  try {
+    const centers = await getMyCenters(req.cookies.email)
+    const centersId = centers.map(c => c.id)
+    const booking = await getBookingByCenterId(centersId)
+
+    res.json({
+      booking
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
 // get center by id
 routs.get('/getCenter', async (req, res) => {
   try {
@@ -374,6 +493,7 @@ routs.get('/getCenter', async (req, res) => {
     console.log('id is', id)
     const centers = await getCenterbyid(id)
     const courts = await getCourtCenter(id)
+    console.log('centers', centers)
     console.log('courts', courts)
     res.json({ centers, courts })
   } catch (error) {
@@ -383,22 +503,19 @@ routs.get('/getCenter', async (req, res) => {
   }
 })
 
-routs.get('/getCourts', async (req, res) =>{
-  // pass the centired id 
-  console.log("Test counter")
+routs.get('/getCourts', async (req, res) => {
+  // pass the centired id
+  console.log('Test counter')
   try {
-    const {centerId} = req.query
+    const { centerId } = req.query
     console.log(centerId)
-   
+
     const coutrs = await getCourts(centerId)
-    res.json({coutrs})   
-  }catch(err){
+    res.json({ coutrs })
+  }catch (err) {
     console.log(err)
     throw err
   }
- 
-  
-
 })
 
 routs.post('/createCompetition', async (req, res)=>{

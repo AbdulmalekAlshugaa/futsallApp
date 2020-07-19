@@ -3,6 +3,7 @@ const Center = require('../model/centers')
 const findNearCenter = async ({ longitude, latitude, max = 1000 }) => {
   try {
     const centers = await Center.find({
+      status: 'APPROVED',
       location: {
         $near: {
           $geometry: {

@@ -38,7 +38,7 @@ const teamScame = new Schema({
   
   }
 
-})
+}, { timestamps: true })
 
 const team = model ('team', teamScame)
 

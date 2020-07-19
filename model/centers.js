@@ -5,6 +5,10 @@ const centerSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  status: {
+    type: String,
+    default: 'PENDING'
+  },
   name: { // name of the ceneter
     type: String,
     required: true
@@ -35,12 +39,18 @@ const centerSchema = new mongoose.Schema({
     type: [String] 
   },
   workingHours:{
-    from:String,
-    to:String
+    from: {
+      type: String,
+      default: '0'
+    },
+    to: {
+      type: String,
+      default: '0'
+    }
   }
 
 
-})
+}, { timestamps: true })
 
 const centers = mongoose.model('centers', centerSchema)
 
