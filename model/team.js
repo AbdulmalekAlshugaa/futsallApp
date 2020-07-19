@@ -2,21 +2,40 @@ const { Schema,model } = require('../config/mongo')
 
 
 const teamScame = new Schema({
-  orgnizerId:{
+  id:{
+    type:String,
+    required:true
+
+  },
+  captainEmail:{
+    type:String,
+    required:true
+   
+  },
+
+  from:{
     required:true,
     type:String
   },
-  start:{
+  to:{
     required:true,
-    type:Date
+    type:String
   },
-  end:{
+  date:{
     required:true,
     type:Date
+
+  },
+  status:{
+    required:true,
+    type:String,
+    default:"PENDDING"
   },
   listOfPlayers:{
     required:true,
-    type:Array
+    type:Array,
+    default:[""]
+  
   }
 
 }, { timestamps: true })

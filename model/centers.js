@@ -39,8 +39,14 @@ const centerSchema = new mongoose.Schema({
     type: [String] 
   },
   workingHours:{
-    from:String,
-    to:String
+    from: {
+      type: String,
+      default: '0'
+    },
+    to: {
+      type: String,
+      default: '0'
+    }
   }
 
 

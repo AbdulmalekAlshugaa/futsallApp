@@ -26,6 +26,13 @@ const distance = require('../functions/calculateDistance')
 const bookingCourt = require('../functions/bookACour')
 const moment = require('moment')
 // const updatePhoto = require('')
+const getMyTeam = require('../functions/getMyTeam')
+const createCompetition = require('../functions/createCompe')
+const subscripToComp = require('../functions/subscripToCompetition')
+
+//const updatePhoto = require('')
+
+
 
 routs.post('/createUser', async (req, res) => {
 // send json
@@ -109,9 +116,29 @@ routs.post('/login', async (req, res) => {
     res.status(500).json({ message: error.message })
   }
 })
+// create team 
+routs.post('/createTeam', async (req, res) => {
+  console.log("Working")
+  try {
+    const email = req.cookies.email
+    console.log(email)
+    
+    const {id, captainEmail, from, to, date,status,listOfPlayers} = req.body
 
+    await createTeam({ id, captainEmail:email, from, to, date, status,listOfPlayers })
+
+    res.json({
+      message: 'SUCCESS Team Has Created Successfully'
+
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
 // get CurrentUsers
-
 routs.get('/CurrentUser', async (req, res) => {
   const { email } = req.cookies
 
@@ -136,7 +163,6 @@ routs.get('/CurrentUser', async (req, res) => {
     console.log(e)
   }
 })
-
 // logout
 routs.get('/logout', async (req, res) => {
   console.log('hi from logout function')
@@ -188,32 +214,42 @@ routs.get('/players', async (req, res) => {
   }
 })
 // send team request
-routs.post('/createTeam', async (req, res) => {
+routs.get('/getMyCenters', async (req, res) => {
   try {
-    const { orgnizerId, start, end, listOfPlayer } = req.body
-
-    await createTeam({ orgnizerId, start, end, listOfPlayer })
-
-    res.json({
-      message: 'SUCCESS Team Has Created Successfully'
-
-    })
+    const centers = await getMyCenters(req.cookies.email)
+    res.json({ centers })
+    
   } catch (error) {
-    console.log(error)
     res.status(500).json({
       error: error.message
     })
   }
 })
 
-routs.get('/getMyCenters', async (req, res) => {
+routs.get('/getMyTeam', async (req, res) => {
+  const { captainEmail } = req.cookies
+  const {Email} = req.query
+  console.log("Email is ",Email)
+
   try {
-    const centers = await getMyCenters(req.cookies.email)
-    res.json({ centers })
-  } catch (error) {
+    const team = await getMyTeam(captainEmail, Email)
+
+    if (!team) {
+      console.log('something wrong')
+      res.status(401).end()
+    } else {
+      res.json({
+        team: team
+
+      })
+    }
+
+    // get the currentUser from the cookies
+  } catch (e) {
     res.status(500).json({
-      error: error.message
+      error: e.message
     })
+    console.log(e)
   }
 })
 routs.post('/createCenter', async (req, res) => {
@@ -287,7 +323,6 @@ routs.post('/createCourt', async (req, res) => {
     })
   }
 })
-
 routs.post('/nearCenters', async (req, res) => {
   try {
     const address = req.body.address
@@ -336,7 +371,6 @@ routs.post('/centerPhotoes', filemiddelware.single('file'), async (req, res) => 
 
   // get center
 })
-
 routs.post('/editCenter', async (req, res) => {
   try {
     const { id, address, start, end } = req.body
@@ -485,5 +519,47 @@ routs.get('/getCourts', async (req, res) => {
     throw err
   }
 })
+
+routs.post('/createCompetition', async (req, res)=>{
+
+  try{
+    // get centired id 
+    const {centerId,name,from, to, time, decription,prize} = req.body
+
+    await createCompetition({ centerId,name,from,to,time,decription,prize})
+
+    res.json({
+      createCompetition:"Created Successfully"
+    })
+    
+  }catch(error){
+    res.status(500).json({
+      error: error.message
+    })
+  }
+ 
+
+
+})
+routs.post('/subscripToComp', async (req, res) =>{
+  try{
+    const email = req.cookies.email
+    const {captainEmail,name,listofmyPlayers,decription} = req.body
+
+    await subscripToComp({ captainEmail:email,name,listofmyPlayers,decription})
+
+    res.json({
+      subscrip:"Team has added to the list"
+    })
+  }catch(error){
+    res.status(500).json({
+      error: error.message
+    })
+  }
+
+} )
+
+
+
 
 module.exports = routs

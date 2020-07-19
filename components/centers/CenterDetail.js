@@ -18,6 +18,7 @@ const CenterDetails = memo(() => {
     (async () => {
       if (query && query.id) {
         const res = await axios.get(`/api/user/getCenter?id=${query.id}`)
+        console.log('center', center)
         setCenter({ ...res.data.centers, courts: res.data.courts })
         setAddress(res.data.centers.address)
         setStart(res.data.centers.workingHours ? center.workingHours.from : '0')
@@ -30,7 +31,8 @@ const CenterDetails = memo(() => {
   const editCenter = async () => {
     try {
       const res = await axios.post('/api/user/editCenter', {
-        id: query.id,
+        id: 
+        query.id,
         address,
         start,
         end

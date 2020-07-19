@@ -40,7 +40,6 @@ const App = memo(({ Component, pageProps }) => {
     })()
   }, [user])
 
-  console.log('router _app', router)
   return (
     <>
       <Head>

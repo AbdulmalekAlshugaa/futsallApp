@@ -4,15 +4,10 @@ const CreateTem = require('../model/team')
 
 const createUser = async (team) => { // name and ...
     try{
-
         // get all the username
         const newTeam = new CreateTem(team)
-
-         await newTeam.get()
-
-        return true;
-
-        
+        await newTeam.save()
+        return true;   
     }catch(error){
         console.log(error)
         throw error
