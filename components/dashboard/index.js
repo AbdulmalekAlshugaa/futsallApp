@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import globalContext from '../context'
 import DashboardPlayer from './Players'
 import DashboardOwner from './Owners'
+import DashboardSuper from './Super'
 
 const Dashboard = React.memo(() => {
   const { user } = useContext(globalContext)
@@ -9,7 +10,9 @@ const Dashboard = React.memo(() => {
   return (
     <div>
       {
-        user.role === 'PLAYER' ? (
+        user.role === 'SUPER' ? (
+          <DashboardSuper />
+        ) : user.role === 'PLAYER' ? (
           <DashboardPlayer />
         ) : (
           <DashboardOwner />
