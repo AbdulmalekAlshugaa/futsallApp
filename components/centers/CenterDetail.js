@@ -18,11 +18,11 @@ const CenterDetails = memo(() => {
     (async () => {
       if (query && query.id) {
         const res = await axios.get(`/api/user/getCenter?id=${query.id}`)
-        console.log('center', center)
+        console.log('center', res)
         setCenter({ ...res.data.centers, courts: res.data.courts })
         setAddress(res.data.centers.address)
-        setStart(res.data.centers.workingHours ? center.workingHours.from : '0')
-        setEnd(res.data.centers.workingHours ? center.workingHours.to : '0')
+        setStart(res.data.centers.workingHours ? res.data.centers.workingHours.from : '0')
+        setEnd(res.data.centers.workingHours ? res.data.centers.workingHours.to : '0')
         setIsLoading(false)
       }
     })()
