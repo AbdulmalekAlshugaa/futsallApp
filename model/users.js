@@ -33,7 +33,7 @@ const UserSchema = new Schema({
     enum:['Goalkeeper', 'Full-backs', 'Sweeper', 'Central Midfield','Striker']
   }
 
-})
+}, { timestamps: true })
 
 const users = model('Users', UserSchema)
 

@@ -23,13 +23,8 @@ const courtModel = new Schema({
     required:true
 
   }
- 
 
-
-
-
-
-})
+}, { timestamps: true })
 
 const court =  model('court', courtModel)
 

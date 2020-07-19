@@ -19,7 +19,7 @@ const teamScame = new Schema({
     type:Array
   }
 
-})
+}, { timestamps: true })
 
 const team = model ('team', teamScame)
 

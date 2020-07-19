@@ -4,10 +4,10 @@ const { v4: uuid4 } = require('uuid')
 const bookingCourt = async (detail) => {
   try {
     const booking = new Booking({
-      id: uuid4,
+      id: uuid4(),
       ...detail
     })
-    booking.save()
+    await booking.save()
   } catch (error) {
     console.log(error)
     throw error
