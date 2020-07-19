@@ -19,9 +19,6 @@ const updateCenter = require('../functions/updateCenter')
 const subscripToComp = require('../functions/subscripToCompetition')
 
 //const updatePhoto = require('')
-
-
-
 routs.post('/createUser', async (req, res) => {
 // send json
   try {
@@ -442,6 +439,8 @@ routs.post('/subscripToComp', async (req, res) =>{
   }
 
 } )
+// super admin delete cecnter 
+
 
 
 
