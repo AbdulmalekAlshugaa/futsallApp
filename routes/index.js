@@ -496,6 +496,7 @@ routs.get('/getCenter', async (req, res) => {
     console.log('id is', id)
     const centers = await getCenterbyid(id)
     const courts = await getCourtCenter(id)
+    console.log('centers', centers)
     console.log('courts', courts)
     res.json({ centers, courts })
   } catch (error) {
