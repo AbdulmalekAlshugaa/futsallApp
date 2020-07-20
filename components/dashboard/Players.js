@@ -20,6 +20,9 @@ const Dashboard = React.memo(() => {
       })
       console.log('res', res)
       setCenters(res.data.centerWithdis)
+      if (res.data.centerWithdis.length === 0) {
+        cogoToast.info('No centers found')
+      }
       await loader.hide()
     } catch (error) {
       console.log(error)
