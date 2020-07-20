@@ -3,6 +3,7 @@ import GlobalContext from '../components/context'
 import Head from 'next/head'
 import axios from 'axios'
 import { useRouter } from 'next/router'
+import { ThemeProvider, CSSReset } from '@chakra-ui/core'
 
 const App = memo(({ Component, pageProps }) => {
   const router = useRouter()
@@ -41,14 +42,15 @@ const App = memo(({ Component, pageProps }) => {
   }, [user])
 
   return (
-    <>
+    <ThemeProvider>
       <Head>
         <link rel='stylesheet' href='/style.css' />
       </Head>
+      <CSSReset />
       <GlobalContext.Provider value={{ setUser, user, query }}>
         <Component {...pageProps} />
       </GlobalContext.Provider>
-    </>
+    </ThemeProvider>
   )
 })
 
