@@ -34,7 +34,7 @@ const teamScame = new Schema({
   listOfPlayers:{
     required:true,
     type:Array,
-    default:[""]
+    default:[]
   
   }
 

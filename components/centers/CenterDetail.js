@@ -5,6 +5,7 @@ import axios from 'axios'
 import cogoToast from 'cogo-toast'
 import CreateCourt from './CreateCourt'
 import { GiMoneyStack } from 'react-icons/gi'
+import { Badge } from '@chakra-ui/core'
 
 const CenterDetails = memo(() => {
   const { query } = useContext(globalState)
@@ -56,7 +57,7 @@ const CenterDetails = memo(() => {
           <header className='bg-white shadow'>
             <div className='max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8'>
               <h1 className='text-3xl font-bold leading-tight text-gray-900'>
-                {center.name}
+                {center.name} <Badge py={2} variant='solid' variantColor={center.status === 'APPROVED' ? 'green' : center.status === 'REJECTED' ? 'red' : 'gray'} mb={1} ml={1}>{center.status}</Badge>
               </h1>
             </div>
           </header>

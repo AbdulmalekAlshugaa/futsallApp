@@ -4,6 +4,7 @@ import CreateCenter from './CreateCenter'
 import axios from 'axios'
 import Link from 'next/link'
 import { MdKeyboardArrowRight } from 'react-icons/md'
+import { Badge } from '@chakra-ui/core'
 
 const Centers = memo(() => {
   const [isLoading, setIsloading] = useState(true)
@@ -47,9 +48,10 @@ const Centers = memo(() => {
                   <div key={center.id}>
                     <div className={`p-6 flex justify-between ${index !== centers.length - 1 && 'border-b border-gray-200'}`}>
                       <div>
-                        <span className='block font-bold text-indigo-600 text-lg'>
+                        <span className='font-bold text-indigo-600 text-lg'>
                           {center.name}
                         </span>
+                        <Badge variant='solid' variantColor={center.status === 'APPROVED' ? 'green' : center.status === 'REJECTED' ? 'red' : 'gray'} mb={1} ml={1}>{center.status}</Badge>
                         <span className='block'>
                           {center.address}
                         </span>

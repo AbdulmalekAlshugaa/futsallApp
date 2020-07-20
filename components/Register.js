@@ -83,7 +83,7 @@ const Register = memo(() => {
                   <option value='GK'>Goalkeeper</option>
                   <option value='FB'>Full-backs</option>
                   <option value='MD'>Midfield</option>
-                  <option value='AT'>Attacker</option>
+                  <option value='ATT'>Attacker</option>
                 </select>
               </div>
             )}
