@@ -19,6 +19,7 @@ const getBookingByCourtId = require('../functions/getBookingByCourtId')
 const removeBookingById = require('../functions/removeBookingById')
 const handleCenter = require('../functions/handleCenter')
 const getAllCenters = require('../functions/getAllCenters')
+const getCourts = require('../functions/getCourts')
 // const updatePhoto = require('')
 
 const updateCenter = require('../functions/updateCenter')
@@ -471,6 +472,20 @@ routs.get('/getMyBook', async (req, res) => {
   }
 })
 
+routs.get('/getCenterBooking', async (req, res) => {
+  try {
+    const booking = await getBookingByCenterId(req.query.centerId)
+
+    res.json({
+      booking
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
 routs.get('/getMyCenterBooking', async (req, res) => {
   try {
     const centers = await getMyCenters(req.cookies.email)
@@ -517,14 +532,12 @@ routs.get('/allCenters', async (req, res) => {
 
 routs.get('/getCourts', async (req, res) => {
   // pass the centired id
-  console.log('Test counter')
   try {
     const { centerId } = req.query
-    console.log(centerId)
 
     const coutrs = await getCourts(centerId)
     res.json({ coutrs })
-  }catch (err) {
+  } catch (err) {
     console.log(err)
     throw err
   }

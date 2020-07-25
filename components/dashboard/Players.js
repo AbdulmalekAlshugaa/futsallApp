@@ -77,7 +77,7 @@ const Dashboard = React.memo(() => {
                     </span>
                   </div>
                   <div className='self-center'>
-                    <Link href={`/centers/${center.id}`}>
+                    <Link href={`/centers/booking?id=${center.id}`}>
                       <a>
                         <MdKeyboardArrowRight />
                       </a>

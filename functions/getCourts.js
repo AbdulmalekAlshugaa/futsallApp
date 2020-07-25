@@ -1,8 +1,8 @@
 const Center = require('../model/court')
 
-const findCourts = async (centiredID) => {
+const findCourts = async (centerId) => {
   try {
-    const Courtscenter = await Center.find({centiredID })
+    const Courtscenter = await Center.find({ centerId })
 
     return Courtscenter
   } catch (error) {
@@ -11,9 +11,3 @@ const findCourts = async (centiredID) => {
 }
 
 module.exports = findCourts
-
-
-
-
-
-

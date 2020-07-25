@@ -1,6 +1,8 @@
 const Center = require('../model/centers')
 
 const findNearCenter = async ({ longitude, latitude, max = 1000 }) => {
+  console.log('max', max)
+  console.log('type', typeof max)
   try {
     const centers = await Center.find({
       status: 'APPROVED',
