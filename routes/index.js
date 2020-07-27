@@ -20,6 +20,7 @@ const removeBookingById = require('../functions/removeBookingById')
 const handleCenter = require('../functions/handleCenter')
 const getAllCenters = require('../functions/getAllCenters')
 const getCourts = require('../functions/getCourts')
+const handleTeamRequest = require('../functions/handleTeamRequest')
 // const updatePhoto = require('')
 
 const updateCenter = require('../functions/updateCenter')
@@ -122,9 +123,9 @@ routs.post('/createTeam', async (req, res) => {
     const email = req.cookies.email
     console.log(email)
     
-    const {id, captainEmail, from, to, date,status,listOfPlayers} = req.body
+    const {captainEmail, from, to, date,status,listOfPlayers} = req.body
 
-    await createTeam({ id, captainEmail:email, from, to, date, status,listOfPlayers })
+    await createTeam({ captainEmail:email, from, to, date, status,listOfPlayers })
 
     res.json({
       message: 'SUCCESS Team Has Created Successfully'
@@ -226,15 +227,12 @@ routs.get('/getMyCenters', async (req, res) => {
 })
 
 routs.get('/getMyTeam', async (req, res) => {
-  const { captainEmail } = req.cookies
-  const {Email} = req.query
-  console.log("Email is ",Email)
+  const { email } = req.cookies
 
   try {
-    const team = await getMyTeam(captainEmail, Email)
+    const team = await getMyTeam(email)
 
     if (!team) {
-      console.log('something wrong')
       res.status(401).end()
     } else {
       res.json({
@@ -305,6 +303,20 @@ routs.post('/handleCenter', async (req, res) => {
   }
 })
 
+routs.post('/handleTeamRequest', async (req, res) => {
+  try {
+    const { id, status } = req.body
+    await handleTeamRequest(id, req.cookies.email, status)
+    res.json({
+      message: 'SUCCESS'
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
 // create court
 routs.post('/createCourt', async (req, res) => {
   console.log('test')

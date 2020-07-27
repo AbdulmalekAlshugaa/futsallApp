@@ -40,7 +40,7 @@ const MyBooking = memo(() => {
                     Time
                     </th>
                     <th className='px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider'>
-                              Status
+                    Status
                     </th>
                   </tr>
                 </thead>
@@ -57,12 +57,12 @@ const MyBooking = memo(() => {
                         {moment(b.date).isBefore(moment(), 'day') ? (
                           <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800'>
                           Expired
-                        </span>
+                          </span>
 
                         ) : (
-                          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                          <span class='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'>
                           Active
-                        </span>
+                          </span>
                         )}
                       </td>
                     </tr>
