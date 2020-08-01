@@ -33,7 +33,7 @@ const getMyTeam = require('../functions/getMyTeam')
 const createCompetition = require('../functions/createCompe')
 const subscripToComp = require('../functions/subscripToCompetition')
 
-//const updatePhoto = require('')
+// const updatePhoto = require('')
 routs.post('/createUser', async (req, res) => {
 // send json
   try {
@@ -116,16 +116,14 @@ routs.post('/login', async (req, res) => {
     res.status(500).json({ message: error.message })
   }
 })
-// create team 
+// create team
 routs.post('/createTeam', async (req, res) => {
-  console.log("Working")
   try {
     const email = req.cookies.email
     console.log(email)
-    
-    const {captainEmail, from, to, date,status,listOfPlayers} = req.body
+    const { from, to, date } = req.body
 
-    await createTeam({ captainEmail:email, from, to, date, status,listOfPlayers })
+    await createTeam({ captainEmail: email, from, to, date: moment(date).toISOString(), status: 's', listOfPlayers: [] })
 
     res.json({
       message: 'SUCCESS Team Has Created Successfully'
@@ -190,21 +188,11 @@ routs.get('/logout', async (req, res) => {
 // get Players
 routs.get('/players', async (req, res) => {
   try {
-    const { role } = req.query
-    console.log('role', role)
-    const name = await getUsers(role)
-
-    if (!name) {
-      console.log('Something went wrong ')
-      res.status(500).end()
-    } else {
-      // if user role is there get the last of the user name
-      console.log('Success' + name)
-      res.json({
-
-        Users: name
-      })
-    }
+    const name = await getUsers('PLAYERS')
+    const users = name.filter(u => u.email !== req.cookies.email)
+    res.json({
+      Users: users
+    })
   } catch (error) {
     console.log('Error')
     console.log(error)
@@ -218,7 +206,6 @@ routs.get('/getMyCenters', async (req, res) => {
   try {
     const centers = await getMyCenters(req.cookies.email)
     res.json({ centers })
-    
   } catch (error) {
     res.status(500).json({
       error: error.message
@@ -289,7 +276,6 @@ routs.post('/cancelBooking', async (req, res) => {
     })
   }
 })
-
 
 routs.post('/handleCenter', async (req, res) => {
   try {
@@ -555,48 +541,38 @@ routs.get('/getCourts', async (req, res) => {
   }
 })
 
-routs.post('/createCompetition', async (req, res)=>{
+routs.post('/createCompetition', async (req, res) => {
+  try {
+    // get centired id
+    const { centerId, name, from, to, time, decription, prize } = req.body
 
-  try{
-    // get centired id 
-    const {centerId,name,from, to, time, decription,prize} = req.body
-
-    await createCompetition({ centerId,name,from,to,time,decription,prize})
+    await createCompetition({ centerId, name, from, to, time, decription, prize })
 
     res.json({
-      createCompetition:"Created Successfully"
+      createCompetition: 'Created Successfully'
     })
-    
-  }catch(error){
+  }catch (error) {
     res.status(500).json({
       error: error.message
     })
   }
- 
-
-
 })
-routs.post('/subscripToComp', async (req, res) =>{
-  try{
+routs.post('/subscripToComp', async (req, res) => {
+  try {
     const email = req.cookies.email
-    const {id, competitionId, captainEmail,name,listofmyPlayers,decription} = req.body
+    const { id, competitionId, captainEmail, name, listofmyPlayers, decription } = req.body
 
-    await subscripToComp({ id,competitionId, captainEmail:email,name,listofmyPlayers,decription})
+    await subscripToComp({ id, competitionId, captainEmail: email, name, listofmyPlayers, decription })
 
     res.json({
-      subscrip:"Team has added to the list"
+      subscrip: 'Team has added to the list'
     })
-  }catch(error){
+  }catch (error) {
     res.status(500).json({
       error: error.message
     })
   }
-
-} )
-// super admin delete cecnter 
-
-
-
-
+})
+// super admin delete cecnter
 
 module.exports = routs
