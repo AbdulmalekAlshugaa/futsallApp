@@ -31,6 +31,7 @@ const moment = require('moment')
 const getMyTeam = require('../functions/getMyTeam')
 const createCompetition = require('../functions/createCompe')
 const subscripToComp = require('../functions/subscripToCompetition')
+const joinTeam = require ('../functions/joinTeam')
 
 //const updatePhoto = require('')
 routs.post('/createUser', async (req, res) => {
@@ -213,6 +214,7 @@ routs.get('/players', async (req, res) => {
   }
 })
 // send team request
+
 routs.get('/getMyCenters', async (req, res) => {
   try {
     const centers = await getMyCenters(req.cookies.email)
@@ -251,6 +253,8 @@ routs.get('/getMyTeam', async (req, res) => {
     console.log(e)
   }
 })
+
+
 routs.post('/createCenter', async (req, res) => {
   try {
     const { name, address, phone } = req.body
@@ -303,6 +307,25 @@ routs.post('/handleCenter', async (req, res) => {
       error: error.message
     })
   }
+})
+routs.post('/sendInvition', async (req, res) =>{
+  const { email } = req.cookies // get the email address 
+  console.log("Testing function");
+  console.log(email);
+  const {captainEmail,PlayerEmail, status} = req.body
+
+  try {
+    await joinTeam({captainEmail:email,PlayerEmail,status })
+    res.json({
+      message: 'Inivation has send'
+    })
+  
+  }catch(error){
+
+  }
+
+ 
+
 })
 
 // create court
@@ -581,7 +604,31 @@ routs.post('/subscripToComp', async (req, res) =>{
   }
 
 } )
-// super admin delete cecnter 
+// get center by email
+// get booking by center id
+// get user by emaill with one route 
+routs.get('/getCenterBooking', async(req, res) =>{
+  try {
+
+    const bookingCenter = await getMyCenters(req.cookies.email);
+
+    
+    const booking = await Promise.all(bookingCenter.map(b =>{
+      const centerBooking = await getBookingByCenterId(b.id);
+      return { ...b, booking: centerBooking}
+      
+    }))
+    //const user = await getUsers
+  
+    res.json({bookingCenter})
+
+  }catch(error){
+    console.log(error)
+  }
+
+})
+
+
 
 
 
