@@ -20,6 +20,7 @@ const removeBookingById = require('../functions/removeBookingById')
 const handleCenter = require('../functions/handleCenter')
 const getAllCenters = require('../functions/getAllCenters')
 const getCourts = require('../functions/getCourts')
+const handleTeamRequest = require('../functions/handleTeamRequest')
 // const updatePhoto = require('')
 
 const updateCenter = require('../functions/updateCenter')
@@ -32,8 +33,9 @@ const getMyTeam = require('../functions/getMyTeam')
 const createCompetition = require('../functions/createCompe')
 const subscripToComp = require('../functions/subscripToCompetition')
 const joinTeam = require ('../functions/joinTeam')
+const getuserbyemail = require('../functions/getMultipleUsers')
 
-//const updatePhoto = require('')
+// const updatePhoto = require('')
 routs.post('/createUser', async (req, res) => {
 // send json
   try {
@@ -116,16 +118,14 @@ routs.post('/login', async (req, res) => {
     res.status(500).json({ message: error.message })
   }
 })
-// create team 
+// create team
 routs.post('/createTeam', async (req, res) => {
-  console.log("Working")
   try {
     const email = req.cookies.email
     console.log(email)
-    
-    const {id, captainEmail, from, to, date,status,listOfPlayers} = req.body
+    const { from, to, date } = req.body
 
-    await createTeam({ id, captainEmail:email, from, to, date, status,listOfPlayers })
+    await createTeam({ captainEmail: email, from, to, date: moment(date).toISOString(), status: 's', listOfPlayers: [] })
 
     res.json({
       message: 'SUCCESS Team Has Created Successfully'
@@ -190,21 +190,11 @@ routs.get('/logout', async (req, res) => {
 // get Players
 routs.get('/players', async (req, res) => {
   try {
-    const { role } = req.query
-    console.log('role', role)
-    const name = await getUsers(role)
-
-    if (!name) {
-      console.log('Something went wrong ')
-      res.status(500).end()
-    } else {
-      // if user role is there get the last of the user name
-      console.log('Success' + name)
-      res.json({
-
-        Users: name
-      })
-    }
+    const name = await getUsers('PLAYERS')
+    const users = name.filter(u => u.email !== req.cookies.email)
+    res.json({
+      Users: users
+    })
   } catch (error) {
     console.log('Error')
     console.log(error)
@@ -219,7 +209,6 @@ routs.get('/getMyCenters', async (req, res) => {
   try {
     const centers = await getMyCenters(req.cookies.email)
     res.json({ centers })
-    
   } catch (error) {
     res.status(500).json({
       error: error.message
@@ -228,15 +217,12 @@ routs.get('/getMyCenters', async (req, res) => {
 })
 
 routs.get('/getMyTeam', async (req, res) => {
-  const { captainEmail } = req.cookies
-  const {Email} = req.query
-  console.log("Email is ",Email)
+  const { email } = req.cookies
 
   try {
-    const team = await getMyTeam(captainEmail, Email)
+    const team = await getMyTeam(email)
 
     if (!team) {
-      console.log('something wrong')
       res.status(401).end()
     } else {
       res.json({
@@ -296,7 +282,6 @@ routs.post('/cancelBooking', async (req, res) => {
   }
 })
 
-
 routs.post('/handleCenter', async (req, res) => {
   try {
     await handleCenter(req.body.centerId, req.body.type)
@@ -328,6 +313,20 @@ routs.post('/sendInvition', async (req, res) =>{
 
 })
 
+routs.post('/handleTeamRequest', async (req, res) => {
+  try {
+    const { id, status } = req.body
+    await handleTeamRequest(id, req.cookies.email, status)
+    res.json({
+      message: 'SUCCESS'
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
 // create court
 routs.post('/createCourt', async (req, res) => {
   console.log('test')
@@ -566,38 +565,33 @@ routs.get('/getCourts', async (req, res) => {
   }
 })
 
-routs.post('/createCompetition', async (req, res)=>{
+routs.post('/createCompetition', async (req, res) => {
+  try {
+    // get centired id
+    const { centerId, name, from, to, time, decription, prize } = req.body
 
-  try{
-    // get centired id 
-    const {centerId,name,from, to, time, decription,prize} = req.body
-
-    await createCompetition({ centerId,name,from,to,time,decription,prize})
+    await createCompetition({ centerId, name, from, to, time, decription, prize })
 
     res.json({
-      createCompetition:"Created Successfully"
+      createCompetition: 'Created Successfully'
     })
-    
-  }catch(error){
+  }catch (error) {
     res.status(500).json({
       error: error.message
     })
   }
- 
-
-
 })
-routs.post('/subscripToComp', async (req, res) =>{
-  try{
+routs.post('/subscripToComp', async (req, res) => {
+  try {
     const email = req.cookies.email
-    const {id, competitionId, captainEmail,name,listofmyPlayers,decription} = req.body
+    const { id, competitionId, captainEmail, name, listofmyPlayers, decription } = req.body
 
-    await subscripToComp({ id,competitionId, captainEmail:email,name,listofmyPlayers,decription})
+    await subscripToComp({ id, competitionId, captainEmail: email, name, listofmyPlayers, decription })
 
     res.json({
-      subscrip:"Team has added to the list"
+      subscrip: 'Team has added to the list'
     })
-  }catch(error){
+  }catch (error) {
     res.status(500).json({
       error: error.message
     })
@@ -613,14 +607,19 @@ routs.get('/getCenterBooking', async(req, res) =>{
     const bookingCenter = await getMyCenters(req.cookies.email);
 
     
-    const booking = await Promise.all(bookingCenter.map(b =>{
+    const emails = []
+    const booking = await Promise.all(bookingCenter.map( async b =>{
       const centerBooking = await getBookingByCenterId(b.id);
+      centerBooking.map(e => {
+        emails.push(u.userId)
+      })
       return { ...b, booking: centerBooking}
+
       
     }))
-    //const user = await getUsers
+    const user = await getuserbyemail(emails);
   
-    res.json({bookingCenter})
+    res.json({booking, user})
 
   }catch(error){
     console.log(error)
@@ -633,5 +632,7 @@ routs.get('/getCenterBooking', async(req, res) =>{
 
 
 
+
+// super admin delete cecnter
 
 module.exports = routs
