@@ -601,17 +601,18 @@ routs.post('/subscripToComp', async (req, res) => {
 // get center by email
 // get booking by center id
 // get user by emaill with one route 
-routs.get('/getCenterBooking', async(req, res) =>{
+routs.get('/getAllCenterBooking', async(req, res) =>{
   try {
 
     const bookingCenter = await getMyCenters(req.cookies.email);
 
+    console.log('bookingCenter', bookingCenter)
     
     const emails = []
     const booking = await Promise.all(bookingCenter.map( async b =>{
       const centerBooking = await getBookingByCenterId(b.id);
       centerBooking.map(e => {
-        emails.push(u.userId)
+        emails.push(e.userId)
       })
       return { ...b, booking: centerBooking}
 
