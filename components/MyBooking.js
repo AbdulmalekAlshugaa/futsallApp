@@ -58,7 +58,6 @@ const MyBooking = memo(() => {
                           <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800'>
                           Expired
                           </span>
-
                         ) : (
                           <span class='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'>
                           Active

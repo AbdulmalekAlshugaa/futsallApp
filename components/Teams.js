@@ -6,6 +6,8 @@ import { Divider, Badge, Button, Stack, Tabs, TabList, TabPanels, Tab, TabPanel 
 import moment from 'moment'
 import cogoToast from 'cogo-toast'
 import { useRouter } from 'next/router'
+import time from '../config/times'
+import Link from 'next/link'
 
 const Teams = memo(() => {
   const [createMatch, setCreateMatch] = useState({
@@ -14,7 +16,7 @@ const Teams = memo(() => {
     to: ''
   })
   const [players, setPlayers] = useState([])
-  const [booking, setBooking] = useState([])
+  const [matches, setMatches] = useState([])
   const router = useRouter()
   const ctx = useContext(globalState)
   const [requests, setRequest] = useState([])
@@ -22,27 +24,45 @@ const Teams = memo(() => {
   useEffect(() => {
     (async () => {
       if (ctx.user) {
+        const res1 = await axios.get('/api/user/myMatches')
+        console.log('res1', res1)
+        const activeBookingMatches = res1.data.booking.filter(b => {
+          if (!moment().isAfter(moment(b.date), 'day')) {
+            return true
+          }
+          return false
+        })
         const res = await axios.get('/api/user/getMyTeam')
-        const ress = await axios.get('/api/user/players?role=PLAYER')
         const resss = await axios.get('/api/user/getMyBook')
         console.log('resss', resss)
         // console.log(ress)
-        setPlayers(ress.data.Users)
         const myBooking = resss.data.booking.filter(b => {
-          if (!moment().isAfter(moment(b.data), 'day')) {
+          if (!moment().isAfter(moment(b.date), 'day')) {
             return true
           }
           return false
         })
         console.log('myBooking', myBooking)
         const requests = res.data.team.filter(a => {
-          if (a.captainEmail !== ctx.user.email && moment().isBefore(a.date, 'day')) {
+          if (a.captainEmail !== ctx.user.email && (moment().isBefore(a.date, 'day') || moment().isSame(a.date, 'day'))) {
             const isPending = a.listOfPlayers.find(p => p.status === 'Pending' && p.Email === ctx.user.email)
             return !!isPending
           }
           return false
         })
         setRequest(requests)
+        const activeRequestedMatch = res.data.team.filter(t => {
+          if (t.captainEmail !== ctx.user.email && (moment().isBefore(t.date, 'day') || moment().isSame(t.date, 'day'))) {
+            const isActive = t.listOfPlayers.find(p => p.status === 'approved' && p.Email === ctx.user.email)
+            return !!isActive
+          }
+          return false
+        })
+
+        console.log('activeRequestedMatch', activeRequestedMatch)
+        const aa = res1.data.matches.filter(m => activeRequestedMatch.some(a => a.bookingId === m.id))
+        console.log('aa', aa)
+        setMatches([...aa, ...activeBookingMatches])
         setTeams(res.data.team)
       }
     })()
@@ -98,94 +118,67 @@ const Teams = memo(() => {
         <Tabs>
           <TabList>
             <Tab>Matches</Tab>
-            <Tab>Create Team</Tab>
             <Tab>Team Requests</Tab>
-
           </TabList>
           <TabPanels>
             <TabPanel>
               <div className='max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 h-screen' style={{ backgroundColor: '#f5f5f5' }}>
-              Hello world
-              </div>
-            </TabPanel>
-            <TabPanel>
-              <div className='max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 h-screen' style={{ backgroundColor: '#f5f5f5' }}>
-                <div>
-                  <span className='font-bold text-xl mb-2'>Create team</span>
-                  <div className='bg-white rounded-md shadow'>
-                    <div className='p-6  border-b border-gray-200'>
-                      <div className='flex'>
-                        <div className='mr-4 self-center'>Match Date:</div>
-                        <div><input min={moment().format('YYYY-MM-DD').toString()} type='date' value={createMatch.date} onChange={(e) => setCreateMatch({ ...createMatch, date: e.target.value })} className='border border-gray-600 rounded-md p-2' /></div>
-                      </div>
-                      <div className='flex mt-2'>
-                        <div className='mr-4 self-center'>Game Start:</div>
-                        <div>
-                          <select name='start' onChange={(e) => setCreateMatch({ ...createMatch, from: e.target.value })} value={createMatch.from} class='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline'>
-                            <option value=''>Start Time</option>
-                            <option value='0'>12AM</option>
-                            <option value='1'>1AM</option>
-                            <option value='2'>2AM</option>
-                            <option value='3'>3AM</option>
-                            <option value='4'>4AM</option>
-                            <option value='5'>5AM</option>
-                            <option value='6'>6AM</option>
-                            <option value='7'>7AM</option>
-                            <option value='8'>8AM</option>
-                            <option value='9'>9AM</option>
-                            <option value='10'>10AM</option>
-                            <option value='11'>11AM</option>
-                            <option value='12'>12PM</option>
-                            <option value='13'>1PM</option>
-                            <option value='14'>2PM</option>
-                            <option value='15'>3PM</option>
-                            <option value='16'>4PM</option>
-                            <option value='17'>5PM</option>
-                            <option value='18'>6PM</option>
-                            <option value='19'>7PM</option>
-                            <option value='20'>8PM</option>
-                            <option value='21'>9PM</option>
-                            <option value='22'>10PM</option>
-                            <option value='23'>11PM</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div className='flex mt-2'>
-                        <div className='mr-4 self-center'>Game End:</div>
-                        <div>
-                          <select name='start' onChange={(e) => setCreateMatch({ ...createMatch, to: e.target.value })} value={createMatch.from} class='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline'>
-                            <option value=''>End Time</option>
-                            <option value='0'>12AM</option>
-                            <option value='1'>1AM</option>
-                            <option value='2'>2AM</option>
-                            <option value='3'>3AM</option>
-                            <option value='4'>4AM</option>
-                            <option value='5'>5AM</option>
-                            <option value='6'>6AM</option>
-                            <option value='7'>7AM</option>
-                            <option value='8'>8AM</option>
-                            <option value='9'>9AM</option>
-                            <option value='10'>10AM</option>
-                            <option value='11'>11AM</option>
-                            <option value='12'>12PM</option>
-                            <option value='13'>1PM</option>
-                            <option value='14'>2PM</option>
-                            <option value='15'>3PM</option>
-                            <option value='16'>4PM</option>
-                            <option value='17'>5PM</option>
-                            <option value='18'>6PM</option>
-                            <option value='19'>7PM</option>
-                            <option value='20'>8PM</option>
-                            <option value='21'>9PM</option>
-                            <option value='22'>10PM</option>
-                            <option value='23'>11PM</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div className='flex mt-2'>
-                        <button onClick={createTeam} type='submit' className='inline-flex justify-center w-1/6 rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:border-red-700 focus:shadow-outline-red transition ease-in-out duration-150 sm:text-sm sm:leading-5'>
-                        Create Team
-                        </button>
+                <div className='mt-4'>
+                  <div className='max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8'>
+                    <div className='-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8'>
+                      <div className='align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200'>
+                        <table className='min-w-full'>
+                          <thead>
+                            <tr>
+                              <th className='px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider'>
+                              Date
+                              </th>
+                              <th className='px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider'>
+                              Location
+                              </th>
+                              <th className='px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider'>
+                              Team
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className='bg-white'>
+                            {matches.map(b => (
+                              <tr key={b.id}>
+                                <td className='px-6 py-4 whitespace-no-wrap border-b border-gray-200'>
+                                  <span className='block'>
+                                    {moment(b.date).format('ll').toString()}
+                                  </span>
+                                  <span className='block'>
+                                    {time[b.from]} to {time[b.to]}
+                                  </span>
+                                </td>
+                                <td className='px-6 py-4 whitespace-no-wrap border-b border-gray-200'>
+                                  <span className='block'>
+                                    {b.center.name}
+                                  </span>
+                                  <span className='block'>
+                                    {b.center.address}
+                                  </span>
+                                </td>
+                                <td className='px-6 py-4 whitespace-no-wrap border-b border-gray-200'>
+                                  {teams.find(t => t.bookingId === b.id) ? (
+                                    <div class='underline cursor-pointer'>
+                                      <Link href={`/viewTeam?teamId=${teams.find(t => t.bookingId === b.id).id}`}>
+                                      View my team
+                                      </Link>
+                                    </div>
+                                  ) : (
+                                    <div class='underline cursor-pointer'>
+                                      <Link href={`/createTeam?bookingId=${b.id}`}>
+                                      Create team
+                                      </Link>
+                                    </div>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                   </div>
@@ -231,10 +224,6 @@ const Teams = memo(() => {
                       </div>
                     ))}
                   </div>
-                </div>
-                <Divider />
-                <div>
-                  <span className='font-bold text-xl mb-2'>My Teams</span>
                 </div>
               </div>
             </TabPanel>

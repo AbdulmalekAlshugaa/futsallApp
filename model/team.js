@@ -1,31 +1,16 @@
-const { Schema,model } = require('../config/mongo')
+const { Schema, model } = require('../config/mongo')
 
 
 const teamScame = new Schema({
   id:{
     type:String,
     required:true
-
   },
   captainEmail:{
     type:String,
     required:true
-   
   },
-
-  from:{
-    required:true,
-    type:String
-  },
-  to:{
-    required:true,
-    type:String
-  },
-  date:{
-    required:true,
-    type:Date
-
-  },
+  bookingId: String,
   status:{
     required:true,
     type:String,
@@ -35,11 +20,14 @@ const teamScame = new Schema({
     required:true,
     type:Array,
     default:[]
-  
+  },
+  type: {
+    type: String,
+    default: 'TEAM'
   }
 
 }, { timestamps: true })
 
-const team = model ('team', teamScame)
+const team = model('team', teamScame)
 
 module.exports = team
