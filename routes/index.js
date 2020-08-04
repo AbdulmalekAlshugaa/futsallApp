@@ -21,6 +21,8 @@ const handleCenter = require('../functions/handleCenter')
 const getAllCenters = require('../functions/getAllCenters')
 const getCourts = require('../functions/getCourts')
 const handleTeamRequest = require('../functions/handleTeamRequest')
+const getBookingById = require('../functions/getBookingByIds')
+const getTeamById = require('../functions/getTeamById')
 // const updatePhoto = require('')
 
 const updateCenter = require('../functions/updateCenter')
@@ -32,7 +34,7 @@ const moment = require('moment')
 const getMyTeam = require('../functions/getMyTeam')
 const createCompetition = require('../functions/createCompe')
 const subscripToComp = require('../functions/subscripToCompetition')
-const joinTeam = require ('../functions/joinTeam')
+const joinTeam = require('../functions/joinTeam')
 const getuserbyemail = require('../functions/getMultipleUsers')
 
 // const updatePhoto = require('')
@@ -122,10 +124,14 @@ routs.post('/login', async (req, res) => {
 routs.post('/createTeam', async (req, res) => {
   try {
     const email = req.cookies.email
-    console.log(email)
-    const { from, to, date } = req.body
+    const { listOfPlayers, bookingId } = req.body
 
-    await createTeam({ captainEmail: email, from, to, date: moment(date).toISOString(), status: 's', listOfPlayers: [] })
+    await createTeam({
+      captainEmail: email,
+      status: 's',
+      bookingId,
+      listOfPlayers: listOfPlayers.map(p => ({ Email: p, status: 'Pending' }))
+    })
 
     res.json({
       message: 'SUCCESS Team Has Created Successfully'
@@ -190,7 +196,7 @@ routs.get('/logout', async (req, res) => {
 // get Players
 routs.get('/players', async (req, res) => {
   try {
-    const name = await getUsers('PLAYERS')
+    const name = await getUsers('PLAYER')
     const users = name.filter(u => u.email !== req.cookies.email)
     res.json({
       Users: users
@@ -606,12 +612,13 @@ routs.get('/getAllCenterBooking', async(req, res) =>{
 
     const bookingCenter = await getMyCenters(req.cookies.email);
 
+    console.log('bookingCenter', bookingCenter)
     
     const emails = []
     const booking = await Promise.all(bookingCenter.map( async b =>{
       const centerBooking = await getBookingByCenterId(b.id);
-      centerBooking.map(u => {
-        emails.push(u.userId)
+      centerBooking.map(e => {
+        emails.push(e.userId)
       })
       return { ...b, booking: centerBooking}
 
@@ -623,16 +630,49 @@ routs.get('/getAllCenterBooking', async(req, res) =>{
 
   }catch(error){
     console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
   }
 
 })
 
+routs.get('/myMatches', async (req, res) => {
+  try {
+    const teams = await getMyTeam(req.cookies.email)
 
+    const booking = await getMyCourtBooking(req.cookies.email)
 
+    const matches = await getBookingById(teams.map(t => t.bookingId))
 
+    res.json({
+      booking,
+      teams,
+      matches
+    })
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
 
+routs.get('/getTeamById', async (req, res) => {
+  try {
+    const { id } = req.query
+    const team = await getTeamById(id)
 
+    const players = team.listOfPlayers
 
-// super admin delete cecnter
+    const booking = await getBookingById(team.bookingId)
+    const pp = await Promise.all(players.map(async p => {
+      const player = await findUserByEmail(p.Email)
+      return { ...player, status: p.status }
+    }))
+    res.json({ players: pp, booking })
+  } catch (error) {
+    console.log(error)
+  }
+})
 
 module.exports = routs
