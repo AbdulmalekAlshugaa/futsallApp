@@ -88,11 +88,6 @@ const Dashboard = React.memo(() => {
                            Reject
                           </Button>
                         </Stack>
-                        <Link href={`/centers/${center.id}`}>
-                          <a style={{ alignSelf: 'center' }}>
-                            <MdKeyboardArrowRight />
-                          </a>
-                        </Link>
                       </div>
                     </div>
                   </div>
