@@ -1,36 +1,21 @@
 // name , from , to , time , description
 const { Schema, model } = require("../config/mongo");
 
-const createCompetitionModel = new Schema({
+const createComp = new Schema({
   id: {
     required: true,
     type: String,
   },
-  centerId: {
+
+  Date: {
     required: true,
     type: String,
   },
-  name: {
+  startTime: {
     required: true,
     type: String,
   },
-  from: {
-    required: true,
-    type: String,
-  },
-  to: {
-    required: true,
-    type: String,
-  },
-  time: {
-    required: true,
-    type: String,
-  },
-  decription: {
-    required: true,
-    type: String,
-  },
-  prize: {
+  endTime: {
     required: true,
     type: String,
   },
@@ -84,6 +69,6 @@ const createCompetitionModel = new Schema({
   },
 });
 
-const Competition = model("CompetitionsCollection", createCompetitionModel);
+const Competition = model("Competition", createComp);
 
 module.exports = Competition;
