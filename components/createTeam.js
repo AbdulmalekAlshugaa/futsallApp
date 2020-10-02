@@ -13,7 +13,6 @@ const CreateTeam = memo(() => {
       if (!Router.router.query.bookingId) {
         Router.router.replace("/dashboard");
       } else {
-        console.log("hhh");
         const ress = await axios.get("/api/user/players?role=PLAYER");
         // console.log("matches", ress.data)
         setPlayers(ress.data.Users);
@@ -52,7 +51,7 @@ const CreateTeam = memo(() => {
       </header>
 
       <div
-        className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8  h-screen pt-4"
+        className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8  min-h-screen pt-4"
         style={{ backgroundColor: "#e5e5e5" }}
       >
         <div>
@@ -77,6 +76,18 @@ const CreateTeam = memo(() => {
                   Position:{" "}
                 </Text>
                 <Text as="span">{p.position ? p.position : "ANY"}</Text>
+              </Box>
+              <Box>
+                <Text as="span" fontWeight="bold">
+                Nationality:{" "}
+                </Text>
+                <Text as="span">{p.nationality ? p.nationality : "Not defined"}</Text>
+              </Box>
+              <Box>
+                <Text as="span" fontWeight="bold">
+                Age:{" "}
+                </Text>
+                <Text as="span">{p.age ? p.age : "Not defined"}</Text>
               </Box>
               <Box>
                 {myTeam.includes(p.email) ? (

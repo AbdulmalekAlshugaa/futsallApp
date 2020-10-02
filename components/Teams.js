@@ -25,7 +25,6 @@ const Teams = memo(() => {
     (async () => {
       if (ctx.user) {
         const res1 = await axios.get('/api/user/myMatches')
-        console.log('res1', res1)
         const activeBookingMatches = res1.data.booking.filter(b => {
           if (!moment().isAfter(moment(b.date), 'day')) {
             return true
@@ -34,7 +33,6 @@ const Teams = memo(() => {
         })
         const res = await axios.get('/api/user/getMyTeam')
         const resss = await axios.get('/api/user/getMyBook')
-        console.log('resss', resss)
         // console.log(ress)
         const myBooking = resss.data.booking.filter(b => {
           if (!moment().isAfter(moment(b.date), 'day')) {
@@ -42,7 +40,6 @@ const Teams = memo(() => {
           }
           return false
         })
-        console.log('myBooking', myBooking)
         const requests = res.data.team.filter(a => {
           if (a.captainEmail !== ctx.user.email && (moment().isBefore(a.date, 'day') || moment().isSame(a.date, 'day'))) {
             const isPending = a.listOfPlayers.find(p => p.status === 'Pending' && p.Email === ctx.user.email)
@@ -59,10 +56,8 @@ const Teams = memo(() => {
           return false
         })
 
-        console.log('activeRequestedMatch', activeRequestedMatch)
         const aa = res1.data.matches.filter(m => activeRequestedMatch.some(a => a.bookingId === m.id))
-        console.log('aa', aa)
-        setMatches([...aa, ...activeBookingMatches])
+        setMatches([...activeBookingMatches, ...aa ])
         setTeams(res.data.team)
       }
     })()
