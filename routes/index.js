@@ -23,6 +23,7 @@ const getCourts = require("../functions/getCourts");
 const handleTeamRequest = require("../functions/handleTeamRequest");
 const getBookingById = require("../functions/getBookingByIds");
 const getTeamById = require("../functions/getTeamById");
+const updateUser = require('../functions/updateUser')
 // const updatePhoto = require('')
 
 const updateCenter = require("../functions/updateCenter");
@@ -38,6 +39,50 @@ const joinTeam = require("../functions/joinTeam");
 const getuserbyemail = require("../functions/getMultipleUsers");
 
 // const updatePhoto = require('')
+
+routs.post('/update_user', async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      password,
+      phone,
+      role,
+      position,
+      natoinality,
+      passpoerNumber,
+      birthday,
+      age,
+    } = req.body
+
+    let hashedPassword
+    if (password) {
+      hashedPassword = crypto
+        .createHmac("sha256", process.env.hashingSecret) // encrypted password
+        .update(password)
+        .digest("hex"); // passing the password
+    }
+    await updateUser(req.cookies.email, {
+      ...(name && ({ name })),
+      ...(email && ({ email })),
+      ...(password && ({ password: hashedPassword })),
+      ...(phone && ({ phone })),
+      ...(role && ({ role })),
+      ...(position && ({ position })),
+      ...(natoinality && ({ natoinality })),
+      ...(passpoerNumber && ({ passpoerNumber })),
+      ...(birthday && ({ birthday })),
+      ...(age && ({ age }))
+    })
+
+    res.json({ message: 'success' })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
 routs.post("/createUser", async (req, res) => {
   // send json
   try {
@@ -47,7 +92,7 @@ routs.post("/createUser", async (req, res) => {
       password,
       phone,
       role,
-      postion,
+      position,
       natoinality,
       passpoerNumber,
       birthday,
@@ -65,7 +110,7 @@ routs.post("/createUser", async (req, res) => {
       email,
       phone,
       role,
-      postion,
+      position,
       natoinality,
       passpoerNumber,
       birthday,

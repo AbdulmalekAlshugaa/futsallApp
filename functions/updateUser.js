@@ -1,9 +1,9 @@
 // update user 
 const User = require('../model/users')
 
-const updateUser = async(id, user) =>{
+const updateUser = async(email, user) =>{
     try{
-        const res = await User.updateOne({id}, {$set: user})
+        const res = await User.updateOne({ email }, {$set: user})
 
         return res
     }catch(err){
