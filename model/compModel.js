@@ -67,6 +67,10 @@ const createComp = new Schema({
     required: true,
     type: String,
   },
+  Status: {
+    required: true,
+    type: String,
+  },
 });
 
 const Competition = model("Competition", createComp);

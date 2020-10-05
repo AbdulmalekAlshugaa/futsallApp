@@ -78,6 +78,11 @@ const createCompetitionModel = new Schema({
     required: true,
     type: String,
   },
+  Status: {
+    required: true,
+    type: String,
+    default: "PENDING",
+  },
   passportNumber: {
     required: true,
     type: String,

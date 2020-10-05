@@ -23,7 +23,7 @@ const getCourts = require("../functions/getCourts");
 const handleTeamRequest = require("../functions/handleTeamRequest");
 const getBookingById = require("../functions/getBookingByIds");
 const getTeamById = require("../functions/getTeamById");
-const updateUser = require('../functions/updateUser')
+const updateUser = require("../functions/updateUser");
 // const updatePhoto = require('')
 
 const updateCenter = require("../functions/updateCenter");
@@ -37,10 +37,10 @@ const createCompetition = require("../functions/createCompe");
 const subscripToComp = require("../functions/subscripToCompetition");
 const joinTeam = require("../functions/joinTeam");
 const getuserbyemail = require("../functions/getMultipleUsers");
-
+const getCompetitionsBasedOnStauts = require("../functions/getCompetition");
 // const updatePhoto = require('')
 
-routs.post('/update_user', async (req, res) => {
+routs.post("/update_user", async (req, res) => {
   try {
     const {
       name,
@@ -53,9 +53,9 @@ routs.post('/update_user', async (req, res) => {
       passpoerNumber,
       birthday,
       age,
-    } = req.body
+    } = req.body;
 
-    let hashedPassword
+    let hashedPassword;
     if (password) {
       hashedPassword = crypto
         .createHmac("sha256", process.env.hashingSecret) // encrypted password
@@ -63,26 +63,26 @@ routs.post('/update_user', async (req, res) => {
         .digest("hex"); // passing the password
     }
     await updateUser(req.cookies.email, {
-      ...(name && ({ name })),
-      ...(email && ({ email })),
-      ...(password && ({ password: hashedPassword })),
-      ...(phone && ({ phone })),
-      ...(role && ({ role })),
-      ...(position && ({ position })),
-      ...(natoinality && ({ natoinality })),
-      ...(passpoerNumber && ({ passpoerNumber })),
-      ...(birthday && ({ birthday })),
-      ...(age && ({ age }))
-    })
+      ...(name && { name }),
+      ...(email && { email }),
+      ...(password && { password: hashedPassword }),
+      ...(phone && { phone }),
+      ...(role && { role }),
+      ...(position && { position }),
+      ...(natoinality && { natoinality }),
+      ...(passpoerNumber && { passpoerNumber }),
+      ...(birthday && { birthday }),
+      ...(age && { age }),
+    });
 
-    res.json({ message: 'success' })
+    res.json({ message: "success" });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({
-      error: error.message
-    })
+      error: error.message,
+    });
   }
-})
+});
 routs.post("/createUser", async (req, res) => {
   // send json
   try {
@@ -695,6 +695,7 @@ routs.post("/createCompetition", async (req, res) => {
       bestKBaward,
       soceraward,
       costCompetition,
+      CompetitionStauts: "PENDING",
       passportNumber,
     });
 
@@ -806,5 +807,15 @@ routs.get("/getTeamById", async (req, res) => {
     console.log(error);
   }
 });
+routs.get("/getcompetitions", async (req, res) => {
+  try {
+    const { Competionsstauts } = "PENDING";
 
+    const competitions = await getCompetitionsBasedOnStauts(Competionsstauts);
+    res.json({ competitions });
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+});
 module.exports = routs;
