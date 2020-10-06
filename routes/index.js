@@ -868,8 +868,6 @@ routs.post("/updateStauts", async (req, res) => {
     const competitions = await updateCom(id);
 
     res.json({ competitions });
-    console.log(id);
-    console.log(competitions);
   } catch (error) {
     console.log(error);
     res.status(500).json({

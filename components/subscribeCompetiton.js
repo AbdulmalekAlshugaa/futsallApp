@@ -17,8 +17,9 @@ const CreateTeam = memo(() => {
     })();
   }, []);
 
-  const handleCreateTeam = async () => {
+  const handleCreateTeam = async (id) => {
     try {
+      console.log('id', id)
       if (myTeam.length === 0) {
         return cogoToast.error("Please select player");
       }
@@ -49,7 +50,7 @@ const CreateTeam = memo(() => {
       >
         <Grid templateColumns="repeat(4, 1fr)" gap={6}>
           {players.map((p) => (
-            <Box key={"p.email"} rounded="md" p={4} w="100%" bg="#fff">
+            <Box key={p.email} rounded="md" p={4} w="100%" bg="#fff">
               <Box>
                 <Text as="span" fontWeight="bold">
                   Competion Name:{" "}
@@ -101,14 +102,15 @@ const CreateTeam = memo(() => {
                   <Button
                     variantColor="teal"
                     size="xs"
-                    onClick={handleCreateTeam}
+                    onClick={() => handleCreateTeam(p.id)}
+                    
                   >
                     Approve
                   </Button>
                   <Button
                     variantColor="red"
                     size="xs"
-                    onClick={handleCreateTeam}
+                    onClick={() => handleCreateTeam(p.id)}
                   >
                     Reject
                   </Button>
