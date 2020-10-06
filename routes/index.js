@@ -696,7 +696,7 @@ routs.post("/createCompetition", async (req, res) => {
       bestKBaward,
       soceraward,
       costCompetition,
-      CompetitionStauts: "PENDING",
+      Status: "PENDING",
       passportNumber,
     });
 
@@ -810,9 +810,10 @@ routs.get("/getTeamById", async (req, res) => {
 });
 routs.get("/getcompetitions", async (req, res) => {
   try {
-    const { Competionsstauts } = "PENDING";
+    const { Status } = req.query;
+    console.log(Status);
 
-    const competitions = await getCompetitionsBasedOnStauts(Competionsstauts);
+    const competitions = await getCompetitionsBasedOnStauts(Status);
     res.json({ competitions });
   } catch (err) {
     console.log(err);
