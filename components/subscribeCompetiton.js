@@ -1,6 +1,7 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect, useContext, useState } from "react";
 import PlayerLayout from "./layout/Super";
 import axios from "axios";
+import globalState from "./context";
 import Router from "next/router";
 import { Grid, Box, Text, Button, Stack } from "@chakra-ui/core";
 import cogoToast from "cogo-toast";
@@ -8,21 +9,30 @@ import cogoToast from "cogo-toast";
 const CreateTeam = memo(() => {
   const [players, setPlayers] = useState([]);
   // const [myTeam, setMyTeam] = useState([]);
+  const { query } = useContext(globalState);
   useEffect(() => {
     (async () => {
-      const ress = await axios.get("/api/user/getcompetitions?Status=PENDING");
-      console.log("competions", ress.data);
-      setPlayers(ress.data.competitions);
-      console.log("players", players);
+      if (query) {
+        const ress = await axios.get(
+          "/api/user/getcompetitions?Status=PENDING"
+        );
+        console.log("competions", ress.data);
+        setPlayers(ress.data.competitions);
+
+        console.log("players", players);
+      }
     })();
-  }, []);
+  }, [query]);
 
   const handleCreateTeam = async () => {
     const loader = cogoToast.loading("Creating Team", { hideAfter: 0 });
     try {
-      await axios.post(
-        "api/user/updateStauts?id=b61aeaef-690f-43e1-b8cb-07516abe35df"
-      );
+      const id = "";
+      for (var i = 0; i < players.length; i++) {
+        console.log("id is ", players[i]);
+      }
+      console.log(query.id);
+      await axios.post(`/api/user/updateStauts?id=${query.id}`);
 
       loader.hide();
       cogoToast.success("Success");
