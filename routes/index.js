@@ -38,6 +38,7 @@ const subscripToComp = require("../functions/subscripToCompetition");
 const joinTeam = require("../functions/joinTeam");
 const getuserbyemail = require("../functions/getMultipleUsers");
 const getCompetitionsBasedOnStauts = require("../functions/getCompetition");
+const updateCom = require("../functions/updateCompetision");
 // const updatePhoto = require('')
 
 routs.post("/update_user", async (req, res) => {
@@ -818,4 +819,63 @@ routs.get("/getcompetitions", async (req, res) => {
     throw err;
   }
 });
+
+//
+routs.post("/editCenter", async (req, res) => {
+  try {
+    const { id, address, start, end } = req.body;
+    const center = await getCenterbyid(id);
+    let location;
+    if (center.address !== address) {
+      const locations = await getLocation(address);
+      if (locations.length === 0) {
+        throw new Error("No location found");
+      }
+      location = {
+        type: "Point",
+        coordinates: [locations[0].longitude, locations[0].latitude],
+      };
+    } else {
+      location = center.location;
+    }
+
+    await updateCenter(id, {
+      location,
+      address,
+      workingHours: {
+        from: start,
+        to: end,
+      },
+    });
+
+    res.json({ message: "Success" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+});
+
+routs.post("/updateStauts", async (req, res) => {
+  try {
+    const { id } = req.query;
+
+    if (!id) {
+      return res.send();
+    }
+
+    const competitions = await updateCom(id);
+
+    res.json({ competitions });
+    console.log(id);
+    console.log(competitions);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+});
+
 module.exports = routs;
