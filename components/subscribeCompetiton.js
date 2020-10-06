@@ -20,9 +20,8 @@ const CreateTeam = memo(() => {
   const handleCreateTeam = async () => {
     const loader = cogoToast.loading("Creating Team", { hideAfter: 0 });
     try {
-      console.log(players.id);
       await axios.post(
-        "http://localhost:3000/api/user/updateStauts?id=b61aeaef-690f-43e1-b8cb-07516abe35df"
+        "api/user/updateStauts?id=b61aeaef-690f-43e1-b8cb-07516abe35df"
       );
 
       loader.hide();
