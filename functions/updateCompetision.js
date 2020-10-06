@@ -5,7 +5,7 @@ const updateCompetision = async (id) => {
   try {
     const res = await Competition.updateOne(
       { id },
-      { $set: { CompetitionStauts: "APPROVED" } }
+      { $set: { Status: "APPROVED" } }
     );
 
     return res;

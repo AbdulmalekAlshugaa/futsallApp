@@ -18,11 +18,12 @@ const CreateTeam = memo(() => {
   }, []);
 
   const handleCreateTeam = async () => {
+    const loader = cogoToast.loading("Creating Team", { hideAfter: 0 });
     try {
-      if (myTeam.length === 0) {
-        return cogoToast.error("Please select player");
-      }
-      const loader = cogoToast.loading("Creating Team", { hideAfter: 0 });
+      console.log(players.id);
+      await axios.post(
+        "http://localhost:3000/api/user/updateStauts?id=b61aeaef-690f-43e1-b8cb-07516abe35df"
+      );
 
       loader.hide();
       cogoToast.success("Success");
