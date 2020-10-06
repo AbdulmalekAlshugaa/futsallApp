@@ -862,6 +862,8 @@ routs.post("/updateStauts", async (req, res) => {
   try {
     const { id } = req.query;
 
+    console.log(id);
+
     if (!id) {
       return res.send();
     }

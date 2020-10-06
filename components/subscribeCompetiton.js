@@ -25,13 +25,24 @@ const CreateTeam = memo(() => {
   }, [query]);
 
   const handleCreateTeam = async (id) => {
+    const loader = cogoToast.loading("Approveed", { hideAfter: 0 });
     try {
-      console.log('id', id)
-      if (myTeam.length === 0) {
-        return cogoToast.error("Please select player");
-      }
-      console.log(query.id);
-      await axios.post(`/api/user/updateStauts?id=${query.id}`);
+      console.log("id is ", id);
+
+      console.log("id from ", query.id);
+      await axios.post(`/api/user/updateStauts?id=${id}`);
+
+      loader.hide();
+      cogoToast.success("Success");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const cancel = async (id) => {
+    const loader = cogoToast.loading("Approveed", { hideAfter: 0 });
+    try {
+      console.log("id is ", id);
 
       loader.hide();
       cogoToast.success("Success");
@@ -111,14 +122,13 @@ const CreateTeam = memo(() => {
                     variantColor="teal"
                     size="xs"
                     onClick={() => handleCreateTeam(p.id)}
-                    
                   >
                     Approve
                   </Button>
                   <Button
                     variantColor="red"
                     size="xs"
-                    onClick={() => handleCreateTeam(p.id)}
+                    onClick={() => cancel(p.id)}
                   >
                     Reject
                   </Button>

@@ -1,31 +1,35 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect, useContext, useState } from "react";
 import PlayerLayout from "./layout/Players";
 import axios from "axios";
 import Router from "next/router";
+import globalState from "./context";
 import { Grid, Box, Text, Button } from "@chakra-ui/core";
 import cogoToast from "cogo-toast";
 
 const CreateTeam = memo(() => {
   const [players, setPlayers] = useState([]);
   // const [myTeam, setMyTeam] = useState([]);
+  const { query } = useContext(globalState);
   useEffect(() => {
     (async () => {
-      const ress = await axios.get("/api/user/getcompetitions?Status=PENDING");
-      console.log("competions", ress.data);
-      setPlayers(ress.data.competitions);
-      console.log("players", players);
-    })();
-  }, []);
-
-  const handleCreateTeam = async () => {
-    try {
-      if (myTeam.length === 0) {
-        return cogoToast.error("Please select player");
+      if (query) {
+        const ress = await axios.get(
+          "/api/user/getcompetitions?Status=APPROVED"
+        );
+        console.log("competions", ress.data);
+        setPlayers(ress.data.competitions);
+        console.log("players", players);
       }
-      const loader = cogoToast.loading("Creating Team", { hideAfter: 0 });
+    })();
+  }, [query]);
 
-      loader.hide();
+  const handleCreateTeam = async (orgnizerPhoneNumber) => {
+    try {
+      const loader = cogoToast.loading("Diaplsy", { hideAfter: 0 });
+      alert("Contact Orgnizer " + orgnizerPhoneNumber);
+
       cogoToast.success("Success");
+      loader.hide();
     } catch (error) {
       console.log(error);
     }
@@ -97,7 +101,10 @@ const CreateTeam = memo(() => {
                 )} */}
               </Box>
               <div>
-                <Button variantColor="red" onClick={handleCreateTeam}>
+                <Button
+                  variantColor="red"
+                  onClick={() => handleCreateTeam(p.phoneNUmner)}
+                >
                   Subsribe
                 </Button>
               </div>
