@@ -25,13 +25,12 @@ const Dashboard = React.memo(() => {
   const findNearCenter = async () => {
     const loader = cogoToast.loading("Searching...", { hideAfter: 0 });
     try {
-      const res = await axios.post("/api/user/nearCenters", {
-        address: address,
-        max: KM * 1000,
-      });
+      const res = await axios.get(
+        "/api/user/getApprovelCenters?status=APPROVED"
+      );
       console.log("res", res);
-      setCenters(res.data.centerWithdis);
-      if (res.data.centerWithdis.length === 0) {
+      setCenters(res.data.approvelCen);
+      if (res.data.approvelCen.length === 0) {
         cogoToast.info("No centers found");
       }
       await loader.hide();
@@ -110,7 +109,7 @@ const Dashboard = React.memo(() => {
                           mb={1}
                           ml={1}
                         >
-                          {center.distanceKM.toFixed(2)} KM
+                          {"Within 100"} KM
                         </Badge>
                         <span className="block">{center.address}</span>
                       </div>

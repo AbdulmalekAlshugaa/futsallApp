@@ -39,6 +39,7 @@ const joinTeam = require("../functions/joinTeam");
 const getuserbyemail = require("../functions/getMultipleUsers");
 const getCompetitionsBasedOnStauts = require("../functions/getCompetition");
 const updateCom = require("../functions/updateCompetision");
+const getApprovelCenter = require("../functions/getApprovedCenter");
 // const updatePhoto = require('')
 
 routs.post("/update_user", async (req, res) => {
@@ -808,6 +809,8 @@ routs.get("/getTeamById", async (req, res) => {
     console.log(error);
   }
 });
+//
+
 routs.get("/getcompetitions", async (req, res) => {
   try {
     const { Status } = req.query;
@@ -822,6 +825,18 @@ routs.get("/getcompetitions", async (req, res) => {
 });
 
 //
+routs.get("/getApprovelCenters", async (req, res) => {
+  try {
+    const { status } = req.query;
+    console.log(status);
+
+    const approvelCen = await getApprovelCenter(status);
+    res.json({ approvelCen });
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+});
 routs.post("/editCenter", async (req, res) => {
   try {
     const { id, address, start, end } = req.body;

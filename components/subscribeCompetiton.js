@@ -113,7 +113,7 @@ const CreateTeam = memo(() => {
                 ) : (
                   <Button onClick={() => setMyTeam([...myTeam, p.email])}>
                     Request
-                  </Button>
+                  </Button> 
                 )} */}
               </Box>
               <div>

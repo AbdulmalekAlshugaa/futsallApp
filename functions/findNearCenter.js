@@ -1,27 +1,27 @@
-const Center = require('../model/centers')
+const Center = require("../model/centers");
 
 const findNearCenter = async ({ longitude, latitude, max = 1000 }) => {
-  console.log('max', max)
-  console.log('type', typeof max)
+  console.log("max", max);
+  console.log("type", typeof max);
   try {
     const centers = await Center.find({
-      status: 'APPROVED',
+      status: "APPROVED",
       location: {
         $near: {
           $geometry: {
-            type: 'Point',
-            coordinates: [longitude, latitude]
+            type: "Point",
+            coordinates: [longitude, latitude],
           },
           $maxDistance: max,
-          $minDistance: 0
-        }
-      }
-    }).lean()
-    return centers
+          $minDistance: 0,
+        },
+      },
+    }).lean();
+    return centers;
   } catch (error) {
-    console.log(error)
-    throw error
+    console.log(error);
+    throw error;
   }
-}
+};
 
-module.exports = findNearCenter
+module.exports = findNearCenter;
