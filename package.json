@@ -38,6 +38,6 @@
     "react-icons": "^3.10.0",
     "tailwindcss": "^1.4.6",
     "uuid": "^8.2.0",
-    "validator": "^13.1.1"
+    "validator": "^13.7.0"
   }
 }
