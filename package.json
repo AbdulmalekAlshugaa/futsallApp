@@ -22,7 +22,7 @@
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "emotion-theming": "^10.0.27",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "firebase-admin": "^8.13.0",
     "google-map-react": "^1.1.7",
     "jsonwebtoken": "^8.5.1",
